@@ -1,0 +1,10 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+python-socketio>=5.11.0
+yt-dlp>=2026.6.0
+mutagen>=1.47.0
+pillow>=11.0.0
+slowapi>=0.1.9
+httpx>=0.28.0
+pydantic-settings>=2.6.0
+zipstream-ng>=1.8.0
