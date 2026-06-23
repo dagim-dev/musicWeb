@@ -8,6 +8,7 @@ from typing import Any
 import yt_dlp
 
 from app.models.analyze import AnalyzeResponse, TrackEntry
+from app.services.ytdlp_config import build_ydl_opts
 
 _TITLE_SUFFIX_RE = re.compile(
     r"\s*[\(\[](?:official\s*(?:music\s*)?video|audio|lyric(?:s)?\s*video|visualizer|mv|4k|hd|remaster(?:ed)?|prod\.?|ft\.?|feat\.?)[\)\]]\s*$",
@@ -88,12 +89,12 @@ def _entry_from_info(info: dict[str, Any], album: str | None, index: int | None)
 
 
 def analyze_url(url: str) -> AnalyzeResponse:
-    ydl_opts: dict[str, Any] = {
-        "quiet": True,
-        "no_warnings": True,
-        "extract_flat": "in_playlist",
-        "skip_download": True,
-    }
+    ydl_opts = build_ydl_opts(
+        {
+            "extract_flat": "in_playlist",
+            "skip_download": True,
+        }
+    )
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
@@ -111,7 +112,7 @@ def analyze_url(url: str) -> AnalyzeResponse:
             if entry.get("url") is None and entry.get("id"):
                 entry = {**entry, "url": f"https://www.youtube.com/watch?v={entry['id']}"}
             if entry.get("_type") == "url" and not entry.get("title"):
-                with yt_dlp.YoutubeDL({"quiet": True, "skip_download": True}) as ydl:
+                with yt_dlp.YoutubeDL(build_ydl_opts({"skip_download": True})) as ydl:
                     entry = ydl.extract_info(entry["url"], download=False) or entry
             entries.append(_entry_from_info(entry, album, idx))
 
@@ -138,13 +139,13 @@ def download_audio(
     output_dir.mkdir(parents=True, exist_ok=True)
     outtmpl = str(output_dir / "audio.%(ext)s")
 
-    ydl_opts: dict[str, Any] = {
-        "format": "bestaudio/best/b",
-        "outtmpl": outtmpl,
-        "quiet": True,
-        "no_warnings": True,
-        "noplaylist": True,
-    }
+    ydl_opts = build_ydl_opts(
+        {
+            "format": "bestaudio/best/b",
+            "outtmpl": outtmpl,
+            "noplaylist": True,
+        }
+    )
     if progress_hook:
         ydl_opts["progress_hooks"] = [progress_hook]
 

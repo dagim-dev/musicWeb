@@ -98,7 +98,10 @@ export function zipFileUrl(jobId: string) {
 }
 
 export function healthCheck() {
-  return request<{ status: string; ffmpeg: string | null; ytdlp_version: string }>(
-    '/api/v1/health',
-  )
+  return request<{
+    status: string
+    ffmpeg: string | null
+    ytdlp_version: string
+    youtube_cookies: boolean
+  }>('/api/v1/health')
 }

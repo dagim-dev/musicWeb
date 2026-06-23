@@ -19,12 +19,22 @@ Deploy the backend to **Railway** and the frontend to **Vercel**. This gives you
    | Variable | Value |
    |----------|--------|
    | `CORS_ORIGINS` | `https://YOUR-APP.vercel.app` (add local URLs too if you still dev against prod API) |
+   | `YOUTUBE_COOKIES_BASE64` | Base64 Netscape `cookies.txt` from a logged-in YouTube browser session (required for cloud downloads) |
 
    Example with local dev:
 
    ```
    CORS_ORIGINS=http://localhost:5173,https://tunefetch.vercel.app
    ```
+
+   **YouTube cookies (required on Railway):** YouTube blocks datacenter IPs unless you pass browser cookies.
+
+   ```bash
+   yt-dlp --cookies-from-browser chrome --cookies cookies.txt --skip-download "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+   base64 -i cookies.txt | tr -d '\n'   # paste into YOUTUBE_COOKIES_BASE64
+   ```
+
+   Re-export cookies every few weeks when they expire. Settings → Server Status shows `youtube_cookies: true` when set.
 
 4. **Networking** → **Generate domain** (e.g. `https://tunefetch-production.up.railway.app`).
 5. Verify: open `https://YOUR-RAILWAY-URL/api/v1/health` — expect `"status": "ok"` and non-null `ffmpeg`.

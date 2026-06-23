@@ -59,6 +59,7 @@ export function SettingsPage() {
             <p>API: {healthQuery.data.status}</p>
             <p>FFmpeg: {healthQuery.data.ffmpeg ?? 'Not detected'}</p>
             <p>yt-dlp: {healthQuery.data.ytdlp_version}</p>
+            <p>YouTube cookies: {healthQuery.data.youtube_cookies ? 'Configured' : 'Missing (downloads may fail on cloud)'}</p>
           </div>
         ) : (
           <p className="text-xs text-text-secondary">Checking backend…</p>
