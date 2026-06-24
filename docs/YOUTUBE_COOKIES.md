@@ -19,7 +19,7 @@ YouTube blocks cloud downloads unless the backend has a valid logged-in session.
 ### On your phone
 
 1. Send the file to your phone (AirDrop, email, Google Drive, etc.).
-2. Open **TuneFetch** → **Settings** → **YouTube Session**.
+2. Open **DgLabs** → **Settings** → **YouTube Session**.
 3. Tap **Upload cookies file** and pick `cookies.txt` (`.pdf` also accepted if needed).
 4. Confirm **YouTube cookies (this device): Configured**.
 5. Try a download again.

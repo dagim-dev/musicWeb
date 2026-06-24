@@ -75,7 +75,7 @@ export function SettingsPage() {
     const url = URL.createObjectURL(blob)
     const anchor = document.createElement('a')
     anchor.href = url
-    anchor.download = 'tunefetch-library-backup.json'
+    anchor.download = 'dglabs-library-backup.json'
     anchor.click()
     URL.revokeObjectURL(url)
   }

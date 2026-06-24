@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">TuneFetch</string>
-    <string name="title_activity_main">TuneFetch</string>
+    <string name="app_name">DgLabs</string>
+    <string name="title_activity_main">DgLabs</string>
     <string name="package_name">com.dglabs.tunefetch</string>
     <string name="custom_url_scheme">com.dglabs.tunefetch</string>
 </resources>

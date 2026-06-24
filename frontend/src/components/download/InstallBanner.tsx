@@ -8,7 +8,7 @@ export function InstallBanner() {
 
   return (
     <div className="mb-4 rounded-2xl border border-accent/30 bg-accent/10 p-4">
-      <p className="text-sm font-semibold text-text-primary">Install TuneFetch</p>
+      <p className="text-sm font-semibold text-text-primary">Install DgLabs</p>
       <p className="mt-1 text-xs text-text-secondary">
         Add to your home screen for a full-screen app experience without the browser bar.
       </p>

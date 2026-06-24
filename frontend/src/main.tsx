@@ -17,7 +17,7 @@ const queryClient = new QueryClient({
 registerSW({
   immediate: true,
   onNeedRefresh() {
-    if (confirm('A new version of TuneFetch is available. Reload now?')) {
+    if (confirm('A new version of DgLabs is available. Reload now?')) {
       window.location.reload()
     }
   },

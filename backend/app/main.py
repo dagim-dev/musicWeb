@@ -35,7 +35,7 @@ async def lifespan(_: FastAPI):
 
 def create_app() -> FastAPI:
     settings = get_settings()
-    app = FastAPI(title="TuneFetch API", version="0.1.0", lifespan=lifespan)
+    app = FastAPI(title="DgLabs API", version="0.1.0", lifespan=lifespan)
 
     app.state.limiter = analyze.limiter
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)

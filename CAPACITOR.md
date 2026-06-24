@@ -1,4 +1,4 @@
-# TuneFetch — Capacitor Android App
+# DgLabs — Capacitor Android App
 
 The Capacitor build wraps the same React app in a native Android shell. On the APK, downloads are saved to **`Downloads/DgLabs/`** (created automatically).
 

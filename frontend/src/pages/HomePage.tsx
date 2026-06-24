@@ -232,7 +232,7 @@ export function HomePage() {
   return (
     <div className="space-y-5 p-4 pb-6">
       <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">TuneFetch</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">DgLabs</p>
         <h1 className="mt-1 text-2xl font-bold text-text-primary">Download Music</h1>
         <p className="mt-1 text-sm text-text-secondary">
           Paste a YouTube link and save 320 kbps MP3 files to your device.

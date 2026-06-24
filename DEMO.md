@@ -1,4 +1,4 @@
-# TuneFetch — 3-Minute Demo Script
+# DgLabs — 3-Minute Demo Script
 
 ## Setup (before presenting)
 
@@ -19,7 +19,7 @@
 
 ### 1. Install the PWA (30 seconds)
 
-> "TuneFetch is a Progressive Web App designed to feel like a native Android app."
+> "DgLabs is a Progressive Web App designed to feel like a native Android app."
 
 - Show the **Install App** banner
 - Tap Install → Add to Home Screen
@@ -27,7 +27,7 @@
 
 ### 2. Download a single track (45 seconds)
 
-> "I'll paste a YouTube link and TuneFetch analyzes the metadata before downloading."
+> "I'll paste a YouTube link and DgLabs analyzes the metadata before downloading."
 
 - Paste a short YouTube video URL
 - Tap **Analyze** — show title, artist, thumbnail
@@ -37,7 +37,7 @@
 
 ### 3. Download a playlist (60 seconds)
 
-> "TuneFetch supports full playlists and album-style collections."
+> "DgLabs supports full playlists and album-style collections."
 
 - Paste a YouTube playlist URL
 - Show track selection (deselect one track to demonstrate choice)

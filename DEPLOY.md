@@ -1,4 +1,4 @@
-# TuneFetch — Production Deployment (M6)
+# DgLabs — Production Deployment (M6)
 
 Deploy the backend to **Railway** and the frontend to **Vercel**. This gives you a public HTTPS URL for your university demo (installable PWA, no laptop required).
 
@@ -30,7 +30,7 @@ YouTube blocks Railway without a logged-in session. **Easiest fix (no Terminal k
 
 1. On your Mac: install Chrome extension **Get cookies.txt LOCALLY**.
 2. Open https://www.youtube.com (signed in) → extension → **Export** → `cookies.txt`.
-3. On your phone: TuneFetch → **Settings** → **YouTube Session** → **Upload cookies file**.
+3. On your phone: DgLabs → **Settings** → **YouTube Session** → **Upload cookies file**.
 
 Settings should show **YouTube cookies (this device): Configured**. Server cookies can still show “Missing” — downloads work via per-device session.
 
@@ -75,7 +75,7 @@ See also: [`progressTracker.md`](./progressTracker.md) for full project status.
    | `CORS_ORIGINS` | `http://localhost:5173,https://music-web-dagimak.vercel.app` (add your Vercel URL) |
    | `YOUTUBE_COOKIES_BASE64` | Optional — base64 of `cookies.txt` for server-wide downloads (see below) |
 
-   **Preferred:** each user uploads cookies in TuneFetch Settings (no Railway variable needed).
+   **Preferred:** each user uploads cookies in DgLabs Settings (no Railway variable needed).
 
    **Optional — server-wide cookies** (all users, no per-phone upload):
 

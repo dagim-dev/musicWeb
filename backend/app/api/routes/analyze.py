@@ -23,6 +23,6 @@ async def analyze(request: Request, body: AnalyzeRequest) -> AnalyzeResponse:
         if is_bot_check_error(detail):
             detail = (
                 "YouTube blocked this request (bot check). "
-                "Add YouTube cookies in TuneFetch Settings, or set YOUTUBE_COOKIES_BASE64 on Railway."
+                "Add YouTube cookies in DgLabs Settings, or set YOUTUBE_COOKIES_BASE64 on Railway."
             )
         raise HTTPException(status_code=400, detail=detail) from exc

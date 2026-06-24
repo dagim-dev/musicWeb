@@ -35,7 +35,7 @@ if [[ ! -s "$OUT" ]]; then
 fi
 
 echo "Prefer no keychain prompt? See docs/YOUTUBE_COOKIES.md (browser extension + upload)." >&2
-echo "Option A — TuneFetch on your phone: Settings → YouTube Session → paste below → Save" >&2
+echo "Option A — DgLabs on your phone: Settings → YouTube Session → paste below → Save" >&2
 echo "Option B — Railway: tunefetch → Variables → YOUTUBE_COOKIES_BASE64" >&2
 echo
 echo "YOUTUBE_COOKIES_BASE64="

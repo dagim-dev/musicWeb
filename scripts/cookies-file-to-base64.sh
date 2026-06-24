@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Encode an exported cookies.txt (Netscape format) for Railway or TuneFetch paste.
+# Encode an exported cookies.txt (Netscape format) for Railway or DgLabs paste.
 # No keychain access — use after exporting with a browser extension.
 set -euo pipefail
 
@@ -24,7 +24,7 @@ if [[ ! -s "$FILE" ]]; then
   exit 1
 fi
 
-echo "Option A — TuneFetch on your phone:" >&2
+echo "Option A — DgLabs on your phone:" >&2
 echo "  Settings → YouTube Session → Upload cookies file (.txt or .pdf)" >&2
 echo "Option B — Railway (all users):" >&2
 echo "  Railway → tunefetch → Variables → YOUTUBE_COOKIES_BASE64" >&2

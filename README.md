@@ -1,6 +1,6 @@
-# TuneFetch
+# DgLabs
 
-TuneFetch is a Progressive Web App (PWA) that downloads YouTube audio as **320 kbps MP3** files with full ID3 metadata (artist, album, track number, cover art). Built as an Android-first university project with a native-app feel.
+DgLabs is a Progressive Web App (PWA) that downloads YouTube audio as **320 kbps MP3** files with full ID3 metadata (artist, album, track number, cover art). Built as an Android-first university project with a native-app feel.
 
 ## Architecture
 

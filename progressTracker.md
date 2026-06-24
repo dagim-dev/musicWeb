@@ -1,4 +1,4 @@
-# TuneFetch — Progress Tracker
+# DgLabs — Progress Tracker
 
 > **Last updated:** 2026-06-24 (evening)  
 > **Source of truth:** [`fullPlan.md`](./fullPlan.md)  

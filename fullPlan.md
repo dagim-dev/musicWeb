@@ -268,8 +268,8 @@ musicWebsite/
 **PWA config highlights**
 ```json
 {
-  "name": "TuneFetch",
-  "short_name": "TuneFetch",
+  "name": "DgLabs",
+  "short_name": "DgLabs",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#0f0f12",

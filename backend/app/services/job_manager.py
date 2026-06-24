@@ -239,7 +239,7 @@ class JobManager:
             if "not a bot" in error.lower() or "sign in to confirm" in error.lower():
                 error = (
                     "YouTube blocked this download (bot check). "
-                    "Add YouTube cookies in TuneFetch Settings, or set YOUTUBE_COOKIES_BASE64 on Railway."
+                    "Add YouTube cookies in DgLabs Settings, or set YOUTUBE_COOKIES_BASE64 on Railway."
                 )
             track.error = error
             await emit_track_error(job.job_id, track.index, error)

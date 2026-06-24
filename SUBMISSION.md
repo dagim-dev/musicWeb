@@ -1,4 +1,4 @@
-# TuneFetch — University Submission Package
+# DgLabs — University Submission Package
 
 > **Live demo URL:** https://music-web-dagimak.vercel.app  
 > **Repository:** https://github.com/dagim-dev/musicWeb  
@@ -8,7 +8,7 @@
 
 ## Project summary
 
-TuneFetch is an **Android-first Progressive Web App** that downloads YouTube audio as **320 kbps MP3** files with full **ID3v2.3 metadata** (artist, album, track number, embedded cover art). Files save to the device Downloads folder and appear in **Samsung Music** after a media scan.
+DgLabs is an **Android-first Progressive Web App** that downloads YouTube audio as **320 kbps MP3** files with full **ID3v2.3 metadata** (artist, album, track number, embedded cover art). Files save to the device Downloads folder and appear in **Samsung Music** after a media scan.
 
 Built as a full-stack university project: React/Vite frontend on Vercel, FastAPI media pipeline on Railway, real-time progress via Socket.IO.
 

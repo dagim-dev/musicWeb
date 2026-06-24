@@ -5,8 +5,8 @@ import { getSetting, setSetting } from '@/db/libraryRepository'
 
 const slides = [
   {
-    title: 'Install TuneFetch',
-    body: 'Tap Install App on the home screen to launch TuneFetch without the browser URL bar.',
+    title: 'Install DgLabs',
+    body: 'Tap Install App on the home screen to launch DgLabs without the browser URL bar.',
   },
   {
     title: 'Paste any YouTube link',

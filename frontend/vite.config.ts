@@ -12,8 +12,8 @@ export default defineConfig({
       registerType: 'prompt',
       includeAssets: ['favicon.svg', 'favicon.ico', 'icons/*.png'],
       manifest: {
-        name: 'TuneFetch',
-        short_name: 'TuneFetch',
+        name: 'DgLabs',
+        short_name: 'DgLabs',
         description: 'Download YouTube audio as high-quality MP3 files',
         theme_color: '#0f0f12',
         background_color: '#0f0f12',
