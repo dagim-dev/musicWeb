@@ -26,7 +26,7 @@
 
 ### Maintenance
 
-- Re-run `./scripts/encode-youtube-cookies.sh chrome` when cloud downloads fail (cookie expiry)
+- Re-export YouTube cookies when downloads fail — see [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md)
 - `cd frontend && npm run icons` to regenerate PWA icons after logo changes
 
 ---
@@ -108,7 +108,7 @@
 | Deploy guide | [`DEPLOY.md`](./DEPLOY.md) |
 | Demo script | [`DEMO.md`](./DEMO.md) |
 | Regenerate icons | `cd frontend && npm run icons` |
-| Cookie export | `./scripts/encode-youtube-cookies.sh chrome` |
+| Cookie export | `docs/YOUTUBE_COOKIES.md` (extension + upload) |
 
 ---
 

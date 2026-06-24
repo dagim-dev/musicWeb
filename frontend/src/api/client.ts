@@ -63,7 +63,7 @@ async function apiHeaders(extra?: HeadersInit): Promise<HeadersInit> {
 function formatApiError(detail: unknown, status: number): string {
   const message = typeof detail === 'string' ? detail : `Request failed (${status})`
   if (message.toLowerCase().includes('not a bot') || message.toLowerCase().includes('sign in to confirm')) {
-    return 'YouTube blocked this download. Open Settings → YouTube Session and add cookies (see instructions).'
+    return 'YouTube blocked this download. Settings → YouTube Session → upload cookies.txt (see extension steps).'
   }
   return message
 }

@@ -26,19 +26,25 @@ Deploy the backend to **Railway** and the frontend to **Vercel**. This gives you
 
 ### If Vercel downloads fail with bot check
 
-YouTube blocks Railway’s server IP without cookies:
+YouTube blocks Railway without a logged-in session. **Easiest fix (no Terminal keychain):**
+
+1. On your Mac: install Chrome extension **Get cookies.txt LOCALLY**.
+2. Open https://www.youtube.com (signed in) → export `cookies.txt`.
+3. On your phone: TuneFetch → **Settings** → **YouTube Session** → **Upload cookies.txt**.
+
+Full guide: [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md)
+
+**Optional — fix for all users on Railway:**
 
 ```bash
 cd /Users/dagi/musicWebsite
-chmod +x scripts/encode-youtube-cookies.sh
-./scripts/encode-youtube-cookies.sh chrome
+chmod +x scripts/cookies-file-to-base64.sh
+./scripts/cookies-file-to-base64.sh ~/Downloads/cookies.txt
 ```
 
-1. Copy the printed base64 string.
-2. Railway → **tunefetch** → **Variables** → `YOUTUBE_COOKIES_BASE64` → paste → save.
-3. Wait for redeploy (~1–2 min).
-4. Verify: https://tunefetch-production.up.railway.app/api/v1/health → `"youtube_cookies": true`
-5. Test download at https://music-web-dagimak.vercel.app
+Paste the output into Railway → **tunefetch** → **Variables** → `YOUTUBE_COOKIES_BASE64`.
+
+Verify: https://tunefetch-production.up.railway.app/api/v1/health → `"youtube_cookies": true`
 
 **Security:** Never commit cookies to git or paste them in chat. Treat like a password. Re-export when they expire (every few weeks).
 

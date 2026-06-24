@@ -66,7 +66,7 @@
 |-------|-----|
 | Install banner missing | Use Chrome on Android; ensure HTTPS (Vercel) or localhost |
 | “Failed to fetch” on production | CORS — see [DEPLOY.md](./DEPLOY.md); hard-refresh Vercel app |
-| “Sign in to confirm you’re not a bot” | Set `YOUTUBE_COOKIES_BASE64` on Railway — `./scripts/encode-youtube-cookies.sh chrome` |
+| “Sign in to confirm you’re not a bot” | TuneFetch Settings → upload `cookies.txt` (see `docs/YOUTUBE_COOKIES.md`) |
 | Backend unreachable (local) | Check `docker compose ps` and health endpoint |
 | Download fails (403 / format not available) | Local: Python 3.11+ and yt-dlp ≥ 2026.6.0. Cloud: cookies + redeploy Railway. |
 | Samsung Music doesn't show track | Wait for media scan, or check Downloads folder |

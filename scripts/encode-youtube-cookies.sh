@@ -15,8 +15,8 @@ else
   exit 1
 fi
 
-OUT="$(mktemp /tmp/youtube-cookies.XXXXXX.txt)"
-trap 'rm -f "$OUT"' EXIT
+OUT="$(mktemp -t youtube-cookies)"
+trap 'rm -f "$OUT" "${OUT}.err"' EXIT
 
 echo "Exporting cookies from $BROWSER (you must be signed into YouTube in that browser)..." >&2
 
@@ -34,10 +34,9 @@ if [[ ! -s "$OUT" ]]; then
   exit 1
 fi
 
-echo "Option A — paste into TuneFetch on your phone:" >&2
-echo "  Settings → YouTube Session → paste the base64 string below → Save" >&2
-echo "Option B — set on Railway for all users:" >&2
-echo "  Railway → tunefetch → Variables → YOUTUBE_COOKIES_BASE64" >&2
+echo "Prefer no keychain prompt? See docs/YOUTUBE_COOKIES.md (browser extension + upload)." >&2
+echo "Option A — TuneFetch on your phone: Settings → YouTube Session → paste below → Save" >&2
+echo "Option B — Railway: tunefetch → Variables → YOUTUBE_COOKIES_BASE64" >&2
 echo
 echo "YOUTUBE_COOKIES_BASE64="
 base64 -i "$OUT" | tr -d '\n'

@@ -7,6 +7,7 @@ import { exportLibrary, getSetting, importLibrary, setSetting } from '@/db/libra
 import { useTheme, type ThemeMode } from '@/hooks/useTheme'
 import { DGLABS_FOLDER, isNativeApp } from '@/utils/nativeFileSave'
 import { openSamsungMusic } from '@/utils/samsungMusic'
+import { fileToBase64, isNetscapeCookiesFile } from '@/utils/youtubeCookies'
 
 const themeOptions: Array<{ value: ThemeMode; label: string }> = [
   { value: 'dark', label: 'Dark' },
@@ -56,18 +57,20 @@ export function SettingsPage() {
   }
 
   const handleCookiesFile = async (file: File) => {
-    const buffer = await file.arrayBuffer()
-    const bytes = new Uint8Array(buffer)
-    let binary = ''
-    const chunkSize = 8192
-    for (let i = 0; i < bytes.length; i += chunkSize) {
-      const chunk = bytes.subarray(i, i + chunkSize)
-      binary += String.fromCharCode(...chunk)
+    const text = await file.text()
+    if (!isNetscapeCookiesFile(text)) {
+      setCookiesMessage('That file does not look like cookies.txt from the extension. Export from YouTube while signed in.')
+      return
     }
-    const encoded = btoa(binary)
+    if (!text.trim()) {
+      setCookiesMessage('The cookies file is empty.')
+      return
+    }
+
+    const encoded = await fileToBase64(file)
     setYoutubeCookies(encoded)
     await setSetting('youtubeCookiesBase64', encoded)
-    setCookiesMessage('YouTube cookies imported from file.')
+    setCookiesMessage('YouTube session saved from cookies.txt.')
   }
 
   const handleExport = async () => {
@@ -118,47 +121,78 @@ export function SettingsPage() {
       <Card className="space-y-3">
         <h2 className="text-sm font-semibold text-text-primary">YouTube Session</h2>
         <p className="text-xs leading-relaxed text-text-secondary">
-          If downloads fail with a bot check, export cookies from a browser where you are signed into
-          YouTube. On your Mac run{' '}
-          <code className="rounded bg-surface-muted px-1 py-0.5">./scripts/encode-youtube-cookies.sh chrome</code>{' '}
-          in Terminal, then paste the base64 string below. Stored only on this device.
+          If downloads fail with a bot check, export cookies while signed into YouTube — no Terminal
+          keychain prompt needed.
         </p>
-        <textarea
-          value={youtubeCookies}
-          onChange={(event) => setYoutubeCookies(event.target.value)}
-          placeholder="Paste YOUTUBE_COOKIES_BASE64 value here"
-          rows={4}
-          className="w-full rounded-xl border border-border bg-surface-muted px-4 py-3 text-xs outline-none ring-accent focus:ring-2"
-        />
-        <div className="grid grid-cols-2 gap-2">
-          <Button variant="primary" onClick={() => void saveYoutubeCookies()}>
-            Save session
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setYoutubeCookies('')
-              void setSetting('youtubeCookiesBase64', '').then(() =>
-                setCookiesMessage('YouTube session cleared.'),
-              )
-            }}
-          >
-            Clear
-          </Button>
-        </div>
+        <ol className="list-decimal space-y-2 pl-4 text-xs leading-relaxed text-text-secondary">
+          <li>
+            On a computer: install Chrome extension{' '}
+            <strong className="text-text-primary">Get cookies.txt LOCALLY</strong>.
+          </li>
+          <li>
+            Open <strong className="text-text-primary">youtube.com</strong> (signed in) → extension →
+            export <strong className="text-text-primary">cookies.txt</strong>.
+          </li>
+          <li>Transfer the file to this phone (AirDrop, email, Drive).</li>
+          <li>Upload below — session stays on this device only.</li>
+        </ol>
         <label className="block">
-          <span className="mb-2 block text-xs text-text-secondary">Or upload cookies.txt (Netscape format)</span>
+          <span className="mb-2 block text-sm font-medium text-text-primary">Upload cookies.txt</span>
           <input
             type="file"
             accept=".txt,text/plain"
             onChange={(event) => {
               const file = event.target.files?.[0]
               if (file) void handleCookiesFile(file)
+              event.target.value = ''
             }}
-            className="block w-full text-xs text-text-secondary"
+            className="block w-full text-xs text-text-secondary file:mr-3 file:rounded-lg file:border-0 file:bg-accent file:px-3 file:py-2 file:text-xs file:font-medium file:text-white"
           />
         </label>
-        {cookiesMessage ? <p className="text-xs text-success">{cookiesMessage}</p> : null}
+        {cookiesMessage ? (
+          <p
+            className={
+              cookiesMessage.includes('does not look') || cookiesMessage.includes('empty')
+                ? 'text-xs text-danger'
+                : 'text-xs text-success'
+            }
+          >
+            {cookiesMessage}
+          </p>
+        ) : null}
+        <details className="text-xs text-text-secondary">
+          <summary className="cursor-pointer text-text-primary">Advanced: paste base64 manually</summary>
+          <p className="mt-2 leading-relaxed">
+            Run{' '}
+            <code className="rounded bg-surface-muted px-1 py-0.5">
+              ./scripts/cookies-file-to-base64.sh cookies.txt
+            </code>{' '}
+            on your Mac, or see docs/YOUTUBE_COOKIES.md.
+          </p>
+          <textarea
+            value={youtubeCookies}
+            onChange={(event) => setYoutubeCookies(event.target.value)}
+            placeholder="Paste YOUTUBE_COOKIES_BASE64 value"
+            rows={3}
+            className="mt-2 w-full rounded-xl border border-border bg-surface-muted px-4 py-3 text-xs outline-none ring-accent focus:ring-2"
+          />
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            <Button variant="secondary" onClick={() => void saveYoutubeCookies()}>
+              Save pasted value
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setYoutubeCookies('')
+                void setSetting('youtubeCookiesBase64', '').then(() =>
+                  setCookiesMessage('YouTube session cleared.'),
+                )
+              }}
+            >
+              Clear session
+            </Button>
+          </div>
+        </details>
       </Card>
 
       <Card className="space-y-3">

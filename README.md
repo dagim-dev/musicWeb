@@ -88,7 +88,7 @@ The Vite dev server proxies `/api` and `/socket.io` to `localhost:8000`.
 
 See [DEPLOY.md](./DEPLOY.md) for full deploy steps and **[where to resume](./DEPLOY.md#resume-here-current-project-state)** if you paused mid-setup.
 
-**Next step if production downloads fail:** set `YOUTUBE_COOKIES_BASE64` on Railway (see `scripts/encode-youtube-cookies.sh`).
+**Next step if production downloads fail:** upload `cookies.txt` in TuneFetch Settings, or set `YOUTUBE_COOKIES_BASE64` on Railway — see [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md).
 
 ### Frontend (Vercel)
 
@@ -105,7 +105,7 @@ See [DEPLOY.md](./DEPLOY.md) for full deploy steps and **[where to resume](./DEP
 2. Railway uses root [`railway.toml`](./railway.toml) and root [`Dockerfile`](./Dockerfile)
 3. Set environment variables:
    - `CORS_ORIGINS` = your Vercel frontend URL(s)
-   - `YOUTUBE_COOKIES_BASE64` = required for YouTube downloads on cloud (see `scripts/encode-youtube-cookies.sh`)
+   - `YOUTUBE_COOKIES_BASE64` = required for YouTube downloads on cloud (see `docs/YOUTUBE_COOKIES.md`)
 
 ## API overview
 
