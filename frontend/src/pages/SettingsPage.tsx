@@ -16,20 +16,10 @@ const themeOptions: Array<{ value: ThemeMode; label: string }> = [
 ]
 
 export function SettingsPage() {
-  const [filenameTemplate, setFilenameTemplate] = useState('{artist} - {title}.mp3')
   const [importMessage, setImportMessage] = useState('')
   const [youtubeCookies, setYoutubeCookies] = useState('')
   const [cookiesMessage, setCookiesMessage] = useState('')
   const { theme, setTheme } = useTheme()
-
-  useQuery({
-    queryKey: ['settings', 'filenameTemplate'],
-    queryFn: async () => {
-      const value = await getSetting('filenameTemplate', '{artist} - {title}.mp3')
-      setFilenameTemplate(value)
-      return value
-    },
-  })
 
   useQuery({
     queryKey: ['settings', 'youtubeCookiesBase64'],
@@ -45,10 +35,6 @@ export function SettingsPage() {
     queryFn: healthCheck,
     refetchInterval: 30000,
   })
-
-  const saveTemplate = async () => {
-    await setSetting('filenameTemplate', filenameTemplate)
-  }
 
   const saveYoutubeCookies = async () => {
     const value = youtubeCookies.trim()
@@ -221,18 +207,6 @@ export function SettingsPage() {
             </Button>
           ))}
         </div>
-      </Card>
-
-      <Card className="space-y-3">
-        <h2 className="text-sm font-semibold text-text-primary">Filename Template</h2>
-        <input
-          value={filenameTemplate}
-          onChange={(event) => setFilenameTemplate(event.target.value)}
-          className="w-full rounded-xl border border-border bg-surface-muted px-4 py-3 text-sm outline-none ring-accent focus:ring-2"
-        />
-        <Button variant="secondary" onClick={() => void saveTemplate()}>
-          Save template
-        </Button>
       </Card>
 
       <Card className="space-y-3">
