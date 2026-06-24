@@ -1,4 +1,5 @@
 import { API_BASE } from './config'
+import { getSetting } from '@/db/libraryRepository'
 
 export interface TrackEntry {
   id: string
@@ -50,18 +51,32 @@ export interface JobSnapshot {
   zip_ready: boolean
 }
 
+async function apiHeaders(extra?: HeadersInit): Promise<HeadersInit> {
+  const cookies = (await getSetting('youtubeCookiesBase64', '')).trim()
+  return {
+    'Content-Type': 'application/json',
+    ...(cookies ? { 'X-YouTube-Cookies-Base64': cookies } : {}),
+    ...(extra ?? {}),
+  }
+}
+
+function formatApiError(detail: unknown, status: number): string {
+  const message = typeof detail === 'string' ? detail : `Request failed (${status})`
+  if (message.toLowerCase().includes('not a bot') || message.toLowerCase().includes('sign in to confirm')) {
+    return 'YouTube blocked this download. Open Settings → YouTube Session and add cookies (see instructions).'
+  }
+  return message
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
     ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
+    headers: await apiHeaders(init?.headers),
   })
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({}))
-    throw new Error(body.detail || `Request failed (${response.status})`)
+    throw new Error(formatApiError(body.detail, response.status))
   }
 
   return response.json() as Promise<T>

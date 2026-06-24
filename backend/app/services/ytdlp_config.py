@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 from pathlib import Path
 from typing import Any
 
@@ -9,7 +10,25 @@ from app.config import get_settings
 _COOKIE_PATH: Path | None = None
 
 
-def _write_cookiefile() -> Path | None:
+def _cookie_dir() -> Path:
+    cookie_dir = get_settings().temp_dir.parent
+    cookie_dir.mkdir(parents=True, exist_ok=True)
+    return cookie_dir
+
+
+def _write_cookiefile_from_base64(raw: str, *, suffix: str = "") -> Path:
+    content = base64.b64decode(raw.strip(), validate=True)
+    if not content.strip():
+        raise ValueError("YouTube cookies payload decoded to an empty file")
+
+    digest = hashlib.sha256(content).hexdigest()[:16]
+    path = _cookie_dir() / f"youtube_cookies{suffix}_{digest}.txt"
+    if not path.exists():
+        path.write_bytes(content)
+    return path
+
+
+def _write_env_cookiefile() -> Path | None:
     global _COOKIE_PATH
 
     settings = get_settings()
@@ -18,21 +37,12 @@ def _write_cookiefile() -> Path | None:
         _COOKIE_PATH = None
         return None
 
-    cookie_dir = settings.temp_dir.parent
-    cookie_dir.mkdir(parents=True, exist_ok=True)
-    path = cookie_dir / "youtube_cookies.txt"
-
     try:
-        content = base64.b64decode(raw, validate=True)
+        _COOKIE_PATH = _write_cookiefile_from_base64(raw, suffix="_env")
     except Exception as exc:
         raise ValueError("YOUTUBE_COOKIES_BASE64 is not valid base64") from exc
 
-    if not content.strip():
-        raise ValueError("YOUTUBE_COOKIES_BASE64 decoded to an empty file")
-
-    path.write_bytes(content)
-    _COOKIE_PATH = path
-    return path
+    return _COOKIE_PATH
 
 
 def youtube_cookies_configured() -> bool:
@@ -40,31 +50,40 @@ def youtube_cookies_configured() -> bool:
     return bool(settings.youtube_cookies_base64 and settings.youtube_cookies_base64.strip())
 
 
-def cookiefile_path() -> Path | None:
+def cookiefile_path(cookies_base64: str | None = None) -> Path | None:
     global _COOKIE_PATH
+
+    if cookies_base64 and cookies_base64.strip():
+        try:
+            return _write_cookiefile_from_base64(cookies_base64)
+        except Exception as exc:
+            raise ValueError("Invalid YouTube cookies payload") from exc
 
     if not youtube_cookies_configured():
         return None
 
     if _COOKIE_PATH is None or not _COOKIE_PATH.exists():
-        return _write_cookiefile()
+        return _write_env_cookiefile()
 
     return _COOKIE_PATH
 
 
-def build_ydl_opts(extra: dict[str, Any] | None = None) -> dict[str, Any]:
+def build_ydl_opts(
+    extra: dict[str, Any] | None = None,
+    cookies_base64: str | None = None,
+) -> dict[str, Any]:
     opts: dict[str, Any] = {
         "quiet": True,
         "no_warnings": True,
         "extractor_args": {
             "youtube": {
-                # Helps on some networks; cookies are still required on cloud IPs.
-                "player_client": ["android", "web"],
+                # web first when cookies are present; android helps on some networks.
+                "player_client": ["web", "android", "tv_embedded"],
             }
         },
     }
 
-    cookie_path = cookiefile_path()
+    cookie_path = cookiefile_path(cookies_base64)
     if cookie_path is not None:
         opts["cookiefile"] = str(cookie_path)
 
@@ -77,3 +96,8 @@ def build_ydl_opts(extra: dict[str, Any] | None = None) -> dict[str, Any]:
             }
 
     return opts
+
+
+def is_bot_check_error(message: str) -> bool:
+    lowered = message.lower()
+    return "not a bot" in lowered or "sign in to confirm" in lowered

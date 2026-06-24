@@ -27,6 +27,7 @@ class JobRecord:
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     cancelled: bool = False
     task: asyncio.Task | None = None
+    youtube_cookies_base64: str | None = None
 
     @property
     def job_dir(self) -> Path:
@@ -66,6 +67,7 @@ class JobManager:
         entry_ids: list[str] | None,
         mode: DownloadMode,
         client_ip: str,
+        cookies_base64: str | None = None,
     ) -> JobRecord:
         settings = get_settings()
         async with self._lock:
@@ -73,7 +75,7 @@ class JobManager:
             if len(active) >= settings.max_concurrent_jobs_per_ip:
                 raise ValueError("Too many concurrent jobs. Please wait for current downloads to finish.")
 
-        analyzed = analyze_url(url)
+        analyzed = analyze_url(url, cookies_base64=cookies_base64)
         selected = analyzed.entries
         if entry_ids:
             id_set = set(entry_ids)
@@ -103,6 +105,7 @@ class JobManager:
             album=analyzed.album or analyzed.title,
             status="pending",
             tracks=tracks,
+            youtube_cookies_base64=cookies_base64,
         )
         self._jobs[job_id] = job
         async with self._lock:
@@ -193,6 +196,7 @@ class JobManager:
                 video_url,
                 track_dir,
                 None,
+                job.youtube_cookies_base64,
             )
 
             artist, title = resolve_artist_title(video_info)
@@ -231,8 +235,14 @@ class JobManager:
             await emit_track_complete(job.job_id, track.index, mp3_name, download_url, artist, title)
         except Exception as exc:
             track.stage = JobStage.error
-            track.error = str(exc)
-            await emit_track_error(job.job_id, track.index, str(exc))
+            error = str(exc)
+            if "not a bot" in error.lower() or "sign in to confirm" in error.lower():
+                error = (
+                    "YouTube blocked this download (bot check). "
+                    "Add YouTube cookies in TuneFetch Settings, or set YOUTUBE_COOKIES_BASE64 on Railway."
+                )
+            track.error = error
+            await emit_track_error(job.job_id, track.index, error)
 
 
 job_manager = JobManager()

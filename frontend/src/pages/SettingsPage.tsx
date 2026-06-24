@@ -17,6 +17,8 @@ const themeOptions: Array<{ value: ThemeMode; label: string }> = [
 export function SettingsPage() {
   const [filenameTemplate, setFilenameTemplate] = useState('{artist} - {title}.mp3')
   const [importMessage, setImportMessage] = useState('')
+  const [youtubeCookies, setYoutubeCookies] = useState('')
+  const [cookiesMessage, setCookiesMessage] = useState('')
   const { theme, setTheme } = useTheme()
 
   useQuery({
@@ -24,6 +26,15 @@ export function SettingsPage() {
     queryFn: async () => {
       const value = await getSetting('filenameTemplate', '{artist} - {title}.mp3')
       setFilenameTemplate(value)
+      return value
+    },
+  })
+
+  useQuery({
+    queryKey: ['settings', 'youtubeCookiesBase64'],
+    queryFn: async () => {
+      const value = await getSetting('youtubeCookiesBase64', '')
+      setYoutubeCookies(value)
       return value
     },
   })
@@ -36,6 +47,27 @@ export function SettingsPage() {
 
   const saveTemplate = async () => {
     await setSetting('filenameTemplate', filenameTemplate)
+  }
+
+  const saveYoutubeCookies = async () => {
+    const value = youtubeCookies.trim()
+    await setSetting('youtubeCookiesBase64', value)
+    setCookiesMessage(value ? 'YouTube session saved on this device.' : 'YouTube session cleared.')
+  }
+
+  const handleCookiesFile = async (file: File) => {
+    const buffer = await file.arrayBuffer()
+    const bytes = new Uint8Array(buffer)
+    let binary = ''
+    const chunkSize = 8192
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      const chunk = bytes.subarray(i, i + chunkSize)
+      binary += String.fromCharCode(...chunk)
+    }
+    const encoded = btoa(binary)
+    setYoutubeCookies(encoded)
+    await setSetting('youtubeCookiesBase64', encoded)
+    setCookiesMessage('YouTube cookies imported from file.')
   }
 
   const handleExport = async () => {
@@ -69,11 +101,64 @@ export function SettingsPage() {
             <p>API: {healthQuery.data.status}</p>
             <p>FFmpeg: {healthQuery.data.ffmpeg ?? 'Not detected'}</p>
             <p>yt-dlp: {healthQuery.data.ytdlp_version}</p>
-            <p>YouTube cookies: {healthQuery.data.youtube_cookies ? 'Configured' : 'Missing (downloads may fail on cloud)'}</p>
+            <p>
+              YouTube cookies (server):{' '}
+              {healthQuery.data.youtube_cookies ? 'Configured' : 'Missing — add below or on Railway'}
+            </p>
+            <p>
+              YouTube cookies (this device):{' '}
+              {youtubeCookies.trim() ? 'Configured' : 'Not set'}
+            </p>
           </div>
         ) : (
           <p className="text-xs text-text-secondary">Checking backend…</p>
         )}
+      </Card>
+
+      <Card className="space-y-3">
+        <h2 className="text-sm font-semibold text-text-primary">YouTube Session</h2>
+        <p className="text-xs leading-relaxed text-text-secondary">
+          If downloads fail with a bot check, export cookies from a browser where you are signed into
+          YouTube. On your Mac run{' '}
+          <code className="rounded bg-surface-muted px-1 py-0.5">./scripts/encode-youtube-cookies.sh chrome</code>{' '}
+          in Terminal, then paste the base64 string below. Stored only on this device.
+        </p>
+        <textarea
+          value={youtubeCookies}
+          onChange={(event) => setYoutubeCookies(event.target.value)}
+          placeholder="Paste YOUTUBE_COOKIES_BASE64 value here"
+          rows={4}
+          className="w-full rounded-xl border border-border bg-surface-muted px-4 py-3 text-xs outline-none ring-accent focus:ring-2"
+        />
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="primary" onClick={() => void saveYoutubeCookies()}>
+            Save session
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setYoutubeCookies('')
+              void setSetting('youtubeCookiesBase64', '').then(() =>
+                setCookiesMessage('YouTube session cleared.'),
+              )
+            }}
+          >
+            Clear
+          </Button>
+        </div>
+        <label className="block">
+          <span className="mb-2 block text-xs text-text-secondary">Or upload cookies.txt (Netscape format)</span>
+          <input
+            type="file"
+            accept=".txt,text/plain"
+            onChange={(event) => {
+              const file = event.target.files?.[0]
+              if (file) void handleCookiesFile(file)
+            }}
+            className="block w-full text-xs text-text-secondary"
+          />
+        </label>
+        {cookiesMessage ? <p className="text-xs text-success">{cookiesMessage}</p> : null}
       </Card>
 
       <Card className="space-y-3">
