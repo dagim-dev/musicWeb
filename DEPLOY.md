@@ -2,7 +2,51 @@
 
 Deploy the backend to **Railway** and the frontend to **Vercel**. This gives you a public HTTPS URL for your university demo (installable PWA, no laptop required).
 
-## Prerequisites
+---
+
+## Resume here (current project state)
+
+**As of 2026-06-24 — app works on Android (downloads + albums). Polish deployed in repo; push to `main` for Vercel.**
+
+| What | Status |
+|------|--------|
+| GitHub repo | ✅ https://github.com/dagim-dev/musicWeb (`main`) |
+| Railway backend | ✅ https://tunefetch-production.up.railway.app |
+| Vercel frontend | ✅ **https://music-web-dagimak.vercel.app** ← use this URL |
+| CORS | ✅ Fixed (`CORS_ORIGINS` + `*.vercel.app` regex) |
+| Vercel env vars | ✅ `VITE_API_URL` / `VITE_SOCKET_URL` → Railway URL |
+| Android downloads | ✅ Verified by user (single + playlist/album) |
+| PWA icons + theme | ✅ In repo — push `main` to update Vercel |
+| **YouTube cookies (cloud)** | ⚠️ Health shows `false` — set if production API downloads fail |
+
+### Next on device (~10 min)
+
+1. **Add to Home Screen** from https://music-web-dagimak.vercel.app (M2)
+2. Run [`DEMO.md`](./DEMO.md) script (M7)
+
+### If Vercel downloads fail with bot check
+
+YouTube blocks Railway’s server IP without cookies:
+
+```bash
+cd /Users/dagi/musicWebsite
+chmod +x scripts/encode-youtube-cookies.sh
+./scripts/encode-youtube-cookies.sh chrome
+```
+
+1. Copy the printed base64 string.
+2. Railway → **tunefetch** → **Variables** → `YOUTUBE_COOKIES_BASE64` → paste → save.
+3. Wait for redeploy (~1–2 min).
+4. Verify: https://tunefetch-production.up.railway.app/api/v1/health → `"youtube_cookies": true`
+5. Test download at https://music-web-dagimak.vercel.app
+
+**Security:** Never commit cookies to git or paste them in chat. Treat like a password. Re-export when they expire (every few weeks).
+
+See also: [`progressTracker.md`](./progressTracker.md) for full project status.
+
+---
+
+## Prerequisites (for a fresh deploy)
 
 - GitHub repo pushed to `main`
 - [Railway](https://railway.app) account
@@ -12,69 +56,74 @@ Deploy the backend to **Railway** and the frontend to **Vercel**. This gives you
 
 ## Step 1: Deploy backend (Railway)
 
-1. **New Project** → **Deploy from GitHub repo** → select this repository.
-2. Railway reads [`railway.toml`](./railway.toml) and builds `backend/Dockerfile` (includes FFmpeg).
-3. **Variables** (Railway → your service → Variables):
+**Already done for this project.** Reference for redeploys or new environments.
+
+1. **New Project** → **Deploy from GitHub repo** → select repository.
+2. Railway reads root [`railway.toml`](./railway.toml) and root [`Dockerfile`](./Dockerfile) (copies `backend/` into the image).
+3. **Variables** (Railway → service → Variables):
 
    | Variable | Value |
    |----------|--------|
-   | `CORS_ORIGINS` | `https://YOUR-APP.vercel.app` (add local URLs too if you still dev against prod API) |
-   | `YOUTUBE_COOKIES_BASE64` | Base64 Netscape `cookies.txt` from a logged-in YouTube browser session (required for cloud downloads) |
+   | `CORS_ORIGINS` | `http://localhost:5173,https://music-web-dagimak.vercel.app` (add your Vercel URL) |
+   | `YOUTUBE_COOKIES_BASE64` | Base64 Netscape `cookies.txt` — **required for downloads** |
 
-   Example with local dev:
+   Export cookies:
 
+   ```bash
+   ./scripts/encode-youtube-cookies.sh chrome
    ```
-   CORS_ORIGINS=http://localhost:5173,https://tunefetch.vercel.app
-   ```
 
-   **YouTube cookies (required on Railway):** YouTube blocks datacenter IPs unless you pass browser cookies.
+   Or manually:
 
    ```bash
    yt-dlp --cookies-from-browser chrome --cookies cookies.txt --skip-download "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-   base64 -i cookies.txt | tr -d '\n'   # paste into YOUTUBE_COOKIES_BASE64
+   base64 -i cookies.txt | tr -d '\n'
    ```
 
-   Re-export cookies every few weeks when they expire. Settings → Server Status shows `youtube_cookies: true` when set.
+4. **Networking** → public domain (e.g. `https://tunefetch-production.up.railway.app`).
+5. Verify health: `"status": "ok"`, `ffmpeg` set, **`youtube_cookies": true`**.
 
-4. **Networking** → **Generate domain** (e.g. `https://tunefetch-production.up.railway.app`).
-5. Verify: open `https://YOUR-RAILWAY-URL/api/v1/health` — expect `"status": "ok"` and non-null `ffmpeg`.
+### Railway monorepo note
+
+This repo uses a **root `Dockerfile`** with `COPY backend/...` because Railway’s build context is the repo root. Do not set Root Directory to `backend` unless you switch back to `backend/Dockerfile`.
 
 ---
 
 ## Step 2: Deploy frontend (Vercel)
 
-1. **Add New Project** → import the same GitHub repo.
+**Already done.** Production URL: **https://music-web-dagimak.vercel.app**
+
+1. **Add New Project** → import GitHub repo.
 2. **Root Directory:** `frontend`
-3. **Framework Preset:** Vite (auto-detected)
-4. **Environment variables** (Production):
+3. **Environment variables** (Production):
 
    | Variable | Value |
    |----------|--------|
-   | `VITE_API_URL` | `https://YOUR-RAILWAY-URL` (no trailing slash) |
-   | `VITE_SOCKET_URL` | same Railway URL |
+   | `VITE_API_URL` | `https://tunefetch-production.up.railway.app` |
+   | `VITE_SOCKET_URL` | `https://tunefetch-production.up.railway.app` |
 
-5. Deploy. Note your Vercel URL (e.g. `https://tunefetch.vercel.app`).
+   No trailing slash. If you change these after first deploy, **Redeploy** in Vercel.
+
+4. Deploy. Per-deploy preview URLs (`music-xxxxx-dagimak.vercel.app`) also work via CORS regex; use the main production URL for demos.
 
 ---
 
 ## Step 3: Link CORS (round-trip)
 
-1. Copy your **final Vercel URL**.
-2. In Railway, update `CORS_ORIGINS` to include it exactly (scheme + host, no path).
-3. Redeploy or restart the Railway service if CORS was wrong on first try.
+**Done.** Backend allows `CORS_ORIGINS` list plus `https://.*\.vercel\.app` regex.
+
+If you add a custom domain later, update `CORS_ORIGINS` on Railway.
 
 ---
 
 ## Step 4: Smoke test
 
-On your **Samsung phone** (Chrome):
+On **Samsung phone** (Chrome), open **https://music-web-dagimak.vercel.app**:
 
-1. Open the Vercel URL.
-2. **Settings** → confirm API / FFmpeg / yt-dlp are green.
-3. Paste a short YouTube URL → **Analyze** → **Add to Queue**.
-4. Confirm progress updates and MP3 saves to Downloads.
-5. Open **Samsung Music** — check artist, title, and cover art.
-6. **Add to Home Screen** for standalone PWA demo (HTTPS required — works on Vercel).
+1. **Settings** → API ok, FFmpeg, yt-dlp, **YouTube cookies: Configured**
+2. Paste a short YouTube URL → **Analyze** → **Add to Queue**
+3. MP3 saves to Downloads; check Samsung Music for artist + cover
+4. **Add to Home Screen** (standalone PWA — M2)
 
 ---
 
@@ -82,11 +131,13 @@ On your **Samsung phone** (Chrome):
 
 | Symptom | Fix |
 |---------|-----|
-| API calls fail / CORS error | `CORS_ORIGINS` must include exact Vercel origin (`https://…`) |
-| Socket stuck at 0% | Progress still works via REST polling every 2s; check `VITE_SOCKET_URL` |
-| Download 403 / format error | Railway image uses `requirements.txt`; ensure yt-dlp ≥ 2026.6.0 in health check |
-| ZIP download empty | Job must be in `zip` mode and at least one track completed |
-| Cold start slow | First request after idle may take 10–30s on free Railway tier |
+| “Failed to fetch” on analyze/download | CORS — add Vercel URL to `CORS_ORIGINS`; hard-refresh app |
+| “Sign in to confirm you’re not a bot” | Set `YOUTUBE_COOKIES_BASE64` on Railway (see [Resume here](#resume-here-current-project-state)) |
+| Settings shows “YouTube cookies: Missing” | Same as above; redeploy Railway after setting variable |
+| Socket stuck at 0% | REST polling still works every 2s; check `VITE_SOCKET_URL` |
+| Download 403 / format error | Ensure yt-dlp ≥ 2026.6.0 in health check |
+| Vercel build missing API URL | Redeploy after setting `VITE_*` env vars |
+| Cold start slow | First Railway request after idle may take 10–30s |
 
 ---
 
@@ -104,4 +155,4 @@ Update `CORS_ORIGINS` and `VITE_*` URLs if you change domains.
 - `.github/workflows/frontend-deploy.yml` — builds frontend on PR/push
 - `.github/workflows/backend-deploy.yml` — builds Docker image on PR/push
 
-Auto-deploy to Vercel/Railway is configured in each platform’s dashboard (connect GitHub), not in these workflow files.
+Auto-deploy is configured in Railway/Vercel dashboards (GitHub connected to `main`).

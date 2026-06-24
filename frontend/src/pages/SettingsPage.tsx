@@ -4,10 +4,18 @@ import { healthCheck } from '@/api/client'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { exportLibrary, getSetting, importLibrary, setSetting } from '@/db/libraryRepository'
+import { useTheme, type ThemeMode } from '@/hooks/useTheme'
+
+const themeOptions: Array<{ value: ThemeMode; label: string }> = [
+  { value: 'dark', label: 'Dark' },
+  { value: 'light', label: 'Light' },
+  { value: 'system', label: 'System' },
+]
 
 export function SettingsPage() {
   const [filenameTemplate, setFilenameTemplate] = useState('{artist} - {title}.mp3')
   const [importMessage, setImportMessage] = useState('')
+  const { theme, setTheme } = useTheme()
 
   useQuery({
     queryKey: ['settings', 'filenameTemplate'],
@@ -64,6 +72,22 @@ export function SettingsPage() {
         ) : (
           <p className="text-xs text-text-secondary">Checking backend…</p>
         )}
+      </Card>
+
+      <Card className="space-y-3">
+        <h2 className="text-sm font-semibold text-text-primary">Appearance</h2>
+        <p className="text-xs text-text-secondary">Choose dark, light, or match your device setting.</p>
+        <div className="grid grid-cols-3 gap-2">
+          {themeOptions.map((option) => (
+            <Button
+              key={option.value}
+              variant={theme === option.value ? 'primary' : 'secondary'}
+              onClick={() => void setTheme(option.value)}
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
       </Card>
 
       <Card className="space-y-3">

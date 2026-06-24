@@ -2,9 +2,16 @@
 
 ## Setup (before presenting)
 
-1. Start the stack: `docker compose up --build`
-2. Open http://localhost:5173 on your Android phone (same Wi‑Fi) or use Chrome DevTools mobile emulation
-3. Confirm backend health at `/api/v1/health` shows FFmpeg and **yt-dlp 2026.6.0+**
+**Production (recommended for submission):**
+
+1. Open **https://music-web-dagimak.vercel.app** on your Android phone (Chrome).
+2. Confirm **Settings** shows API ok, FFmpeg, yt-dlp, and **YouTube cookies: Configured** (if Missing, set `YOUTUBE_COOKIES_BASE64` on Railway first — see [DEPLOY.md](./DEPLOY.md)).
+
+**Local fallback:**
+
+1. Start the stack: `docker compose up --build` (or backend + frontend dev servers).
+2. Open http://localhost:5173 on your Android phone (same Wi‑Fi) or use Chrome DevTools mobile emulation.
+3. Confirm backend health at `/api/v1/health` shows FFmpeg and **yt-dlp 2026.6.0+**.
 
 ## Script
 
@@ -57,7 +64,9 @@
 
 | Issue | Fix |
 |-------|-----|
-| Install banner missing | Use Chrome on Android; ensure HTTPS or localhost |
-| Backend unreachable | Check `docker compose ps` and health endpoint |
-| Download fails (403 / format not available) | Use **Python 3.11+** for the backend venv, then update yt-dlp: `pip install -U yt-dlp` in `backend/`. Re-check `/api/v1/health` for `ytdlp_version` ≥ 2026.6.0. Redeploy Railway after bumping `requirements.txt`. |
+| Install banner missing | Use Chrome on Android; ensure HTTPS (Vercel) or localhost |
+| “Failed to fetch” on production | CORS — see [DEPLOY.md](./DEPLOY.md); hard-refresh Vercel app |
+| “Sign in to confirm you’re not a bot” | Set `YOUTUBE_COOKIES_BASE64` on Railway — `./scripts/encode-youtube-cookies.sh chrome` |
+| Backend unreachable (local) | Check `docker compose ps` and health endpoint |
+| Download fails (403 / format not available) | Local: Python 3.11+ and yt-dlp ≥ 2026.6.0. Cloud: cookies + redeploy Railway. |
 | Samsung Music doesn't show track | Wait for media scan, or check Downloads folder |

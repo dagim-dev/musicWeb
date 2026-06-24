@@ -83,7 +83,12 @@ The Vite dev server proxies `/api` and `/socket.io` to `localhost:8000`.
 
 ## Deployment
 
-See [DEPLOY.md](./DEPLOY.md) for step-by-step Railway + Vercel setup.
+**Live app:** https://music-web-dagimak.vercel.app  
+**API:** https://tunefetch-production.up.railway.app
+
+See [DEPLOY.md](./DEPLOY.md) for full deploy steps and **[where to resume](./DEPLOY.md#resume-here-current-project-state)** if you paused mid-setup.
+
+**Next step if production downloads fail:** set `YOUTUBE_COOKIES_BASE64` on Railway (see `scripts/encode-youtube-cookies.sh`).
 
 ### Frontend (Vercel)
 
@@ -96,16 +101,17 @@ See [DEPLOY.md](./DEPLOY.md) for step-by-step Railway + Vercel setup.
 
 ### Backend (Railway)
 
-1. Create a new Railway project from this repo
-2. Railway uses `railway.toml` and `backend/Dockerfile`
-3. Set environment variable:
-   - `CORS_ORIGINS` = your Vercel frontend URL
+1. Create a new Railway project from this repo (or use existing **tunefetch** project)
+2. Railway uses root [`railway.toml`](./railway.toml) and root [`Dockerfile`](./Dockerfile)
+3. Set environment variables:
+   - `CORS_ORIGINS` = your Vercel frontend URL(s)
+   - `YOUTUBE_COOKIES_BASE64` = required for YouTube downloads on cloud (see `scripts/encode-youtube-cookies.sh`)
 
 ## API overview
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/v1/health` | Server health, FFmpeg & yt-dlp versions |
+| GET | `/api/v1/health` | Server health, FFmpeg, yt-dlp, `youtube_cookies` flag |
 | POST | `/api/v1/analyze` | Parse YouTube URL, return track list |
 | POST | `/api/v1/jobs` | Start download/conversion job |
 | GET | `/api/v1/jobs/{id}` | Job status (polling fallback) |
