@@ -7,7 +7,7 @@ import { exportLibrary, getSetting, importLibrary, setSetting } from '@/db/libra
 import { useTheme, type ThemeMode } from '@/hooks/useTheme'
 import { DGLABS_FOLDER, isNativeApp } from '@/utils/nativeFileSave'
 import { openSamsungMusic } from '@/utils/samsungMusic'
-import { fileToBase64, isNetscapeCookiesFile } from '@/utils/youtubeCookies'
+import { encodeCookiesFile, isNetscapeCookiesFile, readCookiesFileContent } from '@/utils/youtubeCookies'
 
 const themeOptions: Array<{ value: ThemeMode; label: string }> = [
   { value: 'dark', label: 'Dark' },
@@ -57,9 +57,18 @@ export function SettingsPage() {
   }
 
   const handleCookiesFile = async (file: File) => {
-    const text = await file.text()
+    let text: string
+    try {
+      text = await readCookiesFileContent(file)
+    } catch {
+      setCookiesMessage('Could not read that file. Try cookies.txt from the extension (Export, not Print to PDF).')
+      return
+    }
+
     if (!isNetscapeCookiesFile(text)) {
-      setCookiesMessage('That file does not look like cookies.txt from the extension. Export from YouTube while signed in.')
+      setCookiesMessage(
+        'That file does not look like YouTube cookies. Use extension → Export on youtube.com (save as .txt, not PDF).',
+      )
       return
     }
     if (!text.trim()) {
@@ -67,10 +76,11 @@ export function SettingsPage() {
       return
     }
 
-    const encoded = await fileToBase64(file)
+    const encoded = await encodeCookiesFile(file)
     setYoutubeCookies(encoded)
     await setSetting('youtubeCookiesBase64', encoded)
-    setCookiesMessage('YouTube session saved from cookies.txt.')
+    const label = file.name.toLowerCase().endsWith('.pdf') ? 'cookies.pdf' : 'cookies.txt'
+    setCookiesMessage(`YouTube session saved from ${label}.`)
   }
 
   const handleExport = async () => {
@@ -131,16 +141,16 @@ export function SettingsPage() {
           </li>
           <li>
             Open <strong className="text-text-primary">youtube.com</strong> (signed in) → extension →
-            export <strong className="text-text-primary">cookies.txt</strong>.
+            export <strong className="text-text-primary">cookies.txt</strong> (use Export, not Print to PDF).
           </li>
           <li>Transfer the file to this phone (AirDrop, email, Drive).</li>
           <li>Upload below — session stays on this device only.</li>
         </ol>
         <label className="block">
-          <span className="mb-2 block text-sm font-medium text-text-primary">Upload cookies.txt</span>
+          <span className="mb-2 block text-sm font-medium text-text-primary">Upload cookies file</span>
           <input
             type="file"
-            accept=".txt,text/plain"
+            accept=".txt,.pdf,text/plain,application/pdf"
             onChange={(event) => {
               const file = event.target.files?.[0]
               if (file) void handleCookiesFile(file)
@@ -152,7 +162,9 @@ export function SettingsPage() {
         {cookiesMessage ? (
           <p
             className={
-              cookiesMessage.includes('does not look') || cookiesMessage.includes('empty')
+              cookiesMessage.includes('does not look') ||
+              cookiesMessage.includes('empty') ||
+              cookiesMessage.includes('Could not read')
                 ? 'text-xs text-danger'
                 : 'text-xs text-success'
             }
