@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { exportLibrary, getSetting, importLibrary, setSetting } from '@/db/libraryRepository'
 import { useTheme, type ThemeMode } from '@/hooks/useTheme'
+import { DGLABS_FOLDER, isNativeApp } from '@/utils/nativeFileSave'
 import { openSamsungMusic } from '@/utils/samsungMusic'
 
 const themeOptions: Array<{ value: ThemeMode; label: string }> = [
@@ -121,6 +122,15 @@ export function SettingsPage() {
           />
         </label>
         {importMessage ? <p className="text-xs text-success">{importMessage}</p> : null}
+      </Card>
+
+      <Card className="space-y-3">
+        <h2 className="text-sm font-semibold text-text-primary">Download folder</h2>
+        <p className="text-xs leading-relaxed text-text-secondary">
+          {isNativeApp()
+            ? `The Android app saves MP3 files to Downloads/${DGLABS_FOLDER}/. The folder is created automatically on first download.`
+            : `The browser PWA saves to your Downloads folder. Install the Android app (see CAPACITOR.md) to use Downloads/${DGLABS_FOLDER}/ automatically.`}
+        </p>
       </Card>
 
       <Card>

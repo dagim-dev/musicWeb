@@ -137,6 +137,10 @@ See [DEMO.md](./DEMO.md) for a step-by-step presentation script.
 
 See [SUBMISSION.md](./SUBMISSION.md) for the university submission summary — live URLs, milestone checklist, architecture diagram, and feature list.
 
+## Android APK (Capacitor)
+
+See [CAPACITOR.md](./CAPACITOR.md) to build the native Android app. The APK saves downloads to **`Downloads/DgLabs/`** automatically.
+
 ## Project structure
 
 ```

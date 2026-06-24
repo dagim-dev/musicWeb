@@ -19,7 +19,7 @@
 
 ### Optional stretch (if you want to keep building)
 
-- [ ] **Capacitor** (V3) — native share intent to Samsung Music, save to Music folder
+- [x] **Capacitor** (V3) — Android APK with `Downloads/DgLabs/` save path (see [`CAPACITOR.md`](./CAPACITOR.md))
 - [ ] **Redis job persistence** — survive tab kill / reconnect
 - [ ] **In-app player** — preview tracks from library (out of original scope)
 - [ ] **Custom domain** on Vercel/Railway
@@ -46,7 +46,7 @@
 
 | Metric | Status |
 |--------|--------|
-| **Architecture version** | V1 complete (V4 Docker included; V3 Capacitor not started) |
+| **Architecture version** | V1 complete + V3 Capacitor scaffold (`Downloads/DgLabs/` on APK) |
 | **Core app** | Verified Mac + Android (single, playlist, album) |
 | **Production** | Railway + Vercel, downloads working |
 | **PWA** | Installed on Home Screen, standalone mode |

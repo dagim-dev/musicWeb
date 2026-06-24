@@ -22,6 +22,7 @@ import { useDownloadSocket } from '@/hooks/useDownloadSocket'
 import { useFileSave } from '@/hooks/useFileSave'
 import { useStartDownload } from '@/hooks/useStartDownload'
 import { useDownloadQueueStore } from '@/stores/downloadQueueStore'
+import { getSaveLocationMessage } from '@/utils/nativeFileSave'
 import { openSamsungMusic } from '@/utils/samsungMusic'
 
 export function HomePage() {
@@ -208,7 +209,7 @@ export function HomePage() {
             fileName: track.fileName,
           }).then(() => {
             setToast({
-              message: 'Saved to Downloads.',
+              message: getSaveLocationMessage(),
               variant: 'success',
               action: { label: 'Open Samsung Music', onClick: openSamsungMusic },
             })
