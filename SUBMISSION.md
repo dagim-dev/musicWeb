@@ -129,7 +129,7 @@ See [`README.md`](./README.md) and [`DEPLOY.md`](./DEPLOY.md) for full setup.
 
 - PWA saves to Downloads via browser pipeline — not direct Samsung Music library injection
 - 320 kbps re-encodes best available YouTube source (cannot exceed source quality)
-- Cloud downloads require YouTube browser cookies on Railway (`YOUTUBE_COOKIES_BASE64`)
+- Cloud downloads require YouTube session cookies — upload in **Settings → YouTube Session** (extension export) or set `YOUTUBE_COOKIES_BASE64` on Railway for all users (see [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md))
 - No user accounts or in-app audio player (out of scope)
 
 ---

@@ -25,7 +25,7 @@ if [[ ! -s "$FILE" ]]; then
 fi
 
 echo "Option A — TuneFetch on your phone:" >&2
-echo "  Settings → YouTube Session → Upload cookies.txt" >&2
+echo "  Settings → YouTube Session → Upload cookies file (.txt or .pdf)" >&2
 echo "Option B — Railway (all users):" >&2
 echo "  Railway → tunefetch → Variables → YOUTUBE_COOKIES_BASE64" >&2
 echo

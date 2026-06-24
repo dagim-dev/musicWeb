@@ -1,6 +1,6 @@
 # TuneFetch — Progress Tracker
 
-> **Last updated:** 2026-06-24  
+> **Last updated:** 2026-06-24 (evening)  
 > **Source of truth:** [`fullPlan.md`](./fullPlan.md)  
 > **Target version:** Version 1 (Full-Stack Cloud) — **complete**  
 > **Overall status:** ✅ **V1 shipped — all milestones verified on Android + production**
@@ -9,7 +9,7 @@
 
 ## Resume here (start next session)
 
-**V1 is complete.** All milestones (M0–M7) verified on Android with production deploy. Submission docs ready.
+**V1 is complete.** YouTube cookie upload via Chrome extension verified on Android. Capacitor APK with `Downloads/DgLabs/` shipped.
 
 ### Submission
 
@@ -96,6 +96,8 @@
 | 2026-06-24 | PWA icons, theme toggle, `@tailwindcss/forms`. |
 | 2026-06-24 | User confirmed full production flow (PWA install, downloads, albums). |
 | 2026-06-24 | Submission polish: Samsung Music shortcut, library stats, analyze skeleton, `SUBMISSION.md`. |
+| 2026-06-24 | Capacitor APK + `Downloads/DgLabs/`; per-device YouTube cookies via extension upload. |
+| 2026-06-24 | Extension cookie flow docs; PDF upload support; user verified downloads after cookie upload. |
 
 ---
 

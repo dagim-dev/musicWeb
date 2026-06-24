@@ -6,7 +6,7 @@ Deploy the backend to **Railway** and the frontend to **Vercel**. This gives you
 
 ## Resume here (current project state)
 
-**As of 2026-06-24 — app works on Android (downloads + albums). Polish deployed in repo; push to `main` for Vercel.**
+**As of 2026-06-24 — production live; YouTube cookie upload verified on Android.**
 
 | What | Status |
 |------|--------|
@@ -15,9 +15,9 @@ Deploy the backend to **Railway** and the frontend to **Vercel**. This gives you
 | Vercel frontend | ✅ **https://music-web-dagimak.vercel.app** ← use this URL |
 | CORS | ✅ Fixed (`CORS_ORIGINS` + `*.vercel.app` regex) |
 | Vercel env vars | ✅ `VITE_API_URL` / `VITE_SOCKET_URL` → Railway URL |
-| Android downloads | ✅ Verified by user (single + playlist/album) |
-| PWA icons + theme | ✅ In repo — push `main` to update Vercel |
-| **YouTube cookies (cloud)** | ⚠️ Health shows `false` — set if production API downloads fail |
+| Android downloads | ✅ Verified (single + playlist/album) |
+| YouTube cookies (device) | ✅ Extension export + Settings upload — see [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md) |
+| YouTube cookies (Railway) | Optional — per-device upload works without Railway variable |
 
 ### Next on device (~10 min)
 
@@ -29,8 +29,10 @@ Deploy the backend to **Railway** and the frontend to **Vercel**. This gives you
 YouTube blocks Railway without a logged-in session. **Easiest fix (no Terminal keychain):**
 
 1. On your Mac: install Chrome extension **Get cookies.txt LOCALLY**.
-2. Open https://www.youtube.com (signed in) → export `cookies.txt`.
-3. On your phone: TuneFetch → **Settings** → **YouTube Session** → **Upload cookies.txt**.
+2. Open https://www.youtube.com (signed in) → extension → **Export** → `cookies.txt`.
+3. On your phone: TuneFetch → **Settings** → **YouTube Session** → **Upload cookies file**.
+
+Settings should show **YouTube cookies (this device): Configured**. Server cookies can still show “Missing” — downloads work via per-device session.
 
 Full guide: [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md)
 
@@ -71,19 +73,23 @@ See also: [`progressTracker.md`](./progressTracker.md) for full project status.
    | Variable | Value |
    |----------|--------|
    | `CORS_ORIGINS` | `http://localhost:5173,https://music-web-dagimak.vercel.app` (add your Vercel URL) |
-   | `YOUTUBE_COOKIES_BASE64` | Base64 Netscape `cookies.txt` — **required for downloads** |
+   | `YOUTUBE_COOKIES_BASE64` | Optional — base64 of `cookies.txt` for server-wide downloads (see below) |
 
-   Export cookies:
+   **Preferred:** each user uploads cookies in TuneFetch Settings (no Railway variable needed).
+
+   **Optional — server-wide cookies** (all users, no per-phone upload):
+
+   ```bash
+   chmod +x scripts/cookies-file-to-base64.sh
+   ./scripts/cookies-file-to-base64.sh ~/Downloads/cookies.txt
+   ```
+
+   Paste the output into `YOUTUBE_COOKIES_BASE64`. Export `cookies.txt` first with the Chrome extension (see [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md)).
+
+   Legacy (macOS Keychain prompt):
 
    ```bash
    ./scripts/encode-youtube-cookies.sh chrome
-   ```
-
-   Or manually:
-
-   ```bash
-   yt-dlp --cookies-from-browser chrome --cookies cookies.txt --skip-download "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-   base64 -i cookies.txt | tr -d '\n'
    ```
 
 4. **Networking** → public domain (e.g. `https://tunefetch-production.up.railway.app`).
@@ -126,7 +132,7 @@ If you add a custom domain later, update `CORS_ORIGINS` on Railway.
 
 On **Samsung phone** (Chrome), open **https://music-web-dagimak.vercel.app**:
 
-1. **Settings** → API ok, FFmpeg, yt-dlp, **YouTube cookies: Configured**
+1. **Settings** → API ok, FFmpeg, yt-dlp; **YouTube cookies (this device): Configured** (upload once — see [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md))
 2. Paste a short YouTube URL → **Analyze** → **Add to Queue**
 3. MP3 saves to Downloads; check Samsung Music for artist + cover
 4. **Add to Home Screen** (standalone PWA — M2)
@@ -138,8 +144,8 @@ On **Samsung phone** (Chrome), open **https://music-web-dagimak.vercel.app**:
 | Symptom | Fix |
 |---------|-----|
 | “Failed to fetch” on analyze/download | CORS — add Vercel URL to `CORS_ORIGINS`; hard-refresh app |
-| “Sign in to confirm you’re not a bot” | Set `YOUTUBE_COOKIES_BASE64` on Railway (see [Resume here](#resume-here-current-project-state)) |
-| Settings shows “YouTube cookies: Missing” | Same as above; redeploy Railway after setting variable |
+| “Sign in to confirm you’re not a bot” | Settings → YouTube Session → upload `cookies.txt` ([guide](./docs/YOUTUBE_COOKIES.md)) |
+| Settings shows server cookies “Missing” | OK if **this device** cookies are configured; or set `YOUTUBE_COOKIES_BASE64` on Railway |
 | Socket stuck at 0% | REST polling still works every 2s; check `VITE_SOCKET_URL` |
 | Download 403 / format error | Ensure yt-dlp ≥ 2026.6.0 in health check |
 | Vercel build missing API URL | Redeploy after setting `VITE_*` env vars |

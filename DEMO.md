@@ -5,7 +5,9 @@
 **Production (recommended for submission):**
 
 1. Open **https://music-web-dagimak.vercel.app** on your Android phone (Chrome).
-2. Confirm **Settings** shows API ok, FFmpeg, yt-dlp, and **YouTube cookies: Configured** (if Missing, set `YOUTUBE_COOKIES_BASE64` on Railway first — see [DEPLOY.md](./DEPLOY.md)).
+2. Confirm **Settings** shows API ok, FFmpeg, yt-dlp, and **YouTube cookies (this device): Configured**.
+   - If missing: export `cookies.txt` with the Chrome extension on a computer, upload in **Settings → YouTube Session** — see [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md).
+   - Server cookies “Missing” on Railway is OK when this device has cookies set.
 
 **Local fallback:**
 
@@ -66,7 +68,7 @@
 |-------|-----|
 | Install banner missing | Use Chrome on Android; ensure HTTPS (Vercel) or localhost |
 | “Failed to fetch” on production | CORS — see [DEPLOY.md](./DEPLOY.md); hard-refresh Vercel app |
-| “Sign in to confirm you’re not a bot” | TuneFetch Settings → upload `cookies.txt` (see `docs/YOUTUBE_COOKIES.md`) |
+| “Sign in to confirm you’re not a bot” | Settings → YouTube Session → upload cookies (`.txt` preferred; `.pdf` supported) — [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md) |
 | Backend unreachable (local) | Check `docker compose ps` and health endpoint |
 | Download fails (403 / format not available) | Local: Python 3.11+ and yt-dlp ≥ 2026.6.0. Cloud: cookies + redeploy Railway. |
 | Samsung Music doesn't show track | Wait for media scan, or check Downloads folder |
