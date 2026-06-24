@@ -8,6 +8,7 @@ import {
   type DownloadMode,
 } from '@/api/client'
 import { InstallBanner } from '@/components/download/InstallBanner'
+import { AnalyzeSkeleton } from '@/components/download/AnalyzeSkeleton'
 import { OnboardingCarousel } from '@/components/download/OnboardingCarousel'
 import { QueueItem } from '@/components/download/QueueItem'
 import { TrackSelectList } from '@/components/download/TrackSelectList'
@@ -21,6 +22,7 @@ import { useDownloadSocket } from '@/hooks/useDownloadSocket'
 import { useFileSave } from '@/hooks/useFileSave'
 import { useStartDownload } from '@/hooks/useStartDownload'
 import { useDownloadQueueStore } from '@/stores/downloadQueueStore'
+import { openSamsungMusic } from '@/utils/samsungMusic'
 
 export function HomePage() {
   const [url, setUrl] = useState('')
@@ -32,9 +34,11 @@ export function HomePage() {
     entryIds: string[]
     mode: DownloadMode
   } | null>(null)
-  const [toast, setToast] = useState<{ message: string; variant: 'info' | 'success' | 'error' } | null>(
-    null,
-  )
+  const [toast, setToast] = useState<{
+    message: string
+    variant: 'info' | 'success' | 'error'
+    action?: { label: string; onClick: () => void }
+  } | null>(null)
 
   const jobs = useDownloadQueueStore((s) => s.jobs)
   const updateJob = useDownloadQueueStore((s) => s.updateJob)
@@ -204,8 +208,9 @@ export function HomePage() {
             fileName: track.fileName,
           }).then(() => {
             setToast({
-              message: 'Saved to Downloads. Open Samsung Music to play your track.',
+              message: 'Saved to Downloads.',
               variant: 'success',
+              action: { label: 'Open Samsung Music', onClick: openSamsungMusic },
             })
           })
         }
@@ -244,6 +249,8 @@ export function HomePage() {
           loading={analyzeMutation.isPending}
         />
       </Card>
+
+      {analyzeMutation.isPending ? <AnalyzeSkeleton /> : null}
 
       {analysis ? (
         <Card className="space-y-4">
@@ -330,6 +337,7 @@ export function HomePage() {
         message={toast?.message ?? ''}
         visible={Boolean(toast)}
         variant={toast?.variant ?? 'info'}
+        action={toast?.action}
         onClose={() => setToast(null)}
       />
     </div>

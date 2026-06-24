@@ -133,6 +133,10 @@ After each download, open Samsung Music to play your tracks.
 
 See [DEMO.md](./DEMO.md) for a step-by-step presentation script.
 
+## Submission package
+
+See [SUBMISSION.md](./SUBMISSION.md) for the university submission summary — live URLs, milestone checklist, architecture diagram, and feature list.
+
 ## Project structure
 
 ```

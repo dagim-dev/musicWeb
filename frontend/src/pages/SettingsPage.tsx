@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { exportLibrary, getSetting, importLibrary, setSetting } from '@/db/libraryRepository'
 import { useTheme, type ThemeMode } from '@/hooks/useTheme'
+import { openSamsungMusic } from '@/utils/samsungMusic'
 
 const themeOptions: Array<{ value: ThemeMode; label: string }> = [
   { value: 'dark', label: 'Dark' },
@@ -123,11 +124,14 @@ export function SettingsPage() {
       </Card>
 
       <Card>
-        <h2 className="text-sm font-semibold text-text-primary">Samsung Music Tip</h2>
+        <h2 className="text-sm font-semibold text-text-primary">Samsung Music</h2>
         <p className="mt-2 text-xs leading-relaxed text-text-secondary">
           After downloading, open Samsung Music. It scans your Downloads folder for new MP3 files.
           Proper artist, album, and cover art tags help tracks appear correctly in your library.
         </p>
+        <Button variant="secondary" fullWidth className="mt-3" onClick={openSamsungMusic}>
+          Open Samsung Music
+        </Button>
       </Card>
     </div>
   )

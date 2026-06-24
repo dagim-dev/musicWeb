@@ -1,19 +1,26 @@
 import clsx from 'clsx'
 import { useEffect } from 'react'
+import { Button } from '@/components/ui/Button'
+
+interface ToastAction {
+  label: string
+  onClick: () => void
+}
 
 interface ToastProps {
   message: string
   visible: boolean
   onClose: () => void
   variant?: 'info' | 'success' | 'error'
+  action?: ToastAction
 }
 
-export function Toast({ message, visible, onClose, variant = 'info' }: ToastProps) {
+export function Toast({ message, visible, onClose, variant = 'info', action }: ToastProps) {
   useEffect(() => {
     if (!visible) return
-    const timer = setTimeout(onClose, 4000)
+    const timer = setTimeout(onClose, action ? 8000 : 4000)
     return () => clearTimeout(timer)
-  }, [visible, onClose])
+  }, [visible, onClose, action])
 
   if (!visible) return null
 
@@ -26,7 +33,20 @@ export function Toast({ message, visible, onClose, variant = 'info' }: ToastProp
         variant === 'info' && 'border-border bg-surface-elevated text-text-primary',
       )}
     >
-      {message}
+      <p>{message}</p>
+      {action ? (
+        <Button
+          variant="secondary"
+          fullWidth
+          className="mt-2 !bg-surface-elevated !text-text-primary"
+          onClick={() => {
+            action.onClick()
+            onClose()
+          }}
+        >
+          {action.label}
+        </Button>
+      ) : null}
     </div>
   )
 }

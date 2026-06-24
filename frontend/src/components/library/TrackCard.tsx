@@ -1,5 +1,6 @@
 import type { TrackRecord } from '@/db/schema'
 import { Card } from '@/components/ui/Card'
+import { useEffect, useState } from 'react'
 
 interface TrackCardProps {
   track: TrackRecord
@@ -16,9 +17,16 @@ function formatDate(value: string) {
 }
 
 export function TrackCard({ track, onDelete, onRedownload }: TrackCardProps) {
-  const thumbnailSrc = track.thumbnailBlob
-    ? URL.createObjectURL(track.thumbnailBlob)
-    : track.thumbnailUrl
+  const [thumbnailSrc, setThumbnailSrc] = useState<string | null>(track.thumbnailUrl)
+
+  useEffect(() => {
+    if (track.thumbnailBlob) {
+      const objectUrl = URL.createObjectURL(track.thumbnailBlob)
+      setThumbnailSrc(objectUrl)
+      return () => URL.revokeObjectURL(objectUrl)
+    }
+    setThumbnailSrc(track.thumbnailUrl)
+  }, [track.thumbnailBlob, track.thumbnailUrl])
 
   return (
     <Card className="flex items-center gap-3 p-3">

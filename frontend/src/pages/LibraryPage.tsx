@@ -5,6 +5,7 @@ import { Toast } from '@/components/ui/Toast'
 import { deleteTrack, getAllTracks, searchTracks } from '@/db/libraryRepository'
 import { useStartDownload } from '@/hooks/useStartDownload'
 import type { TrackRecord } from '@/db/schema'
+import { formatFileSize } from '@/utils/samsungMusic'
 
 export function LibraryPage() {
   const [query, setQuery] = useState('')
@@ -30,6 +31,14 @@ export function LibraryPage() {
     if (query.trim()) return searchQuery.data ?? []
     return tracksQuery.data ?? []
   }, [query, searchQuery.data, tracksQuery.data])
+
+  const libraryStats = useMemo(() => {
+    const all = tracksQuery.data ?? []
+    return {
+      count: all.length,
+      totalBytes: all.reduce((sum, track) => sum + (track.fileSize ?? 0), 0),
+    }
+  }, [tracksQuery.data])
 
   const handleRedownload = async (track: TrackRecord) => {
     const url = track.sourceUrl || `https://www.youtube.com/watch?v=${track.youtubeId}`
@@ -70,6 +79,12 @@ export function LibraryPage() {
         <p className="mt-1 text-sm text-text-secondary">
           Your download history is stored locally and works offline.
         </p>
+        {libraryStats.count > 0 ? (
+          <p className="mt-2 text-xs text-text-secondary">
+            {libraryStats.count} {libraryStats.count === 1 ? 'track' : 'tracks'}
+            {libraryStats.totalBytes > 0 ? ` · ${formatFileSize(libraryStats.totalBytes)} downloaded` : ''}
+          </p>
+        ) : null}
       </header>
 
       <div className="flex gap-2">
