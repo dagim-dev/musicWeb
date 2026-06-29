@@ -86,7 +86,10 @@ def build_ydl_opts(
 
     settings = get_settings()
     if settings.pot_provider_base_url and settings.pot_provider_base_url.strip():
-        # Point the bgutil PO token provider plugin at the running HTTP server.
+        # Point the bgutil PO token provider plugin at the running HTTP server, and
+        # force token fetching up front so a PO token is attached to the player
+        # request itself (needed to get past "not a bot" on flagged IPs).
+        extractor_args["youtube"]["fetch_pot"] = ["always"]
         extractor_args["youtubepot-bgutilhttp"] = {
             "base_url": [settings.pot_provider_base_url.strip()],
         }
