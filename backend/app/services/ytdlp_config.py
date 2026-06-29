@@ -101,3 +101,35 @@ def build_ydl_opts(
 def is_bot_check_error(message: str) -> bool:
     lowered = message.lower()
     return "not a bot" in lowered or "sign in to confirm" in lowered
+
+
+def cookies_source(cookies_base64: str | None = None) -> str:
+    """Report which cookie source applies to a request: 'request', 'server', or 'none'."""
+    if cookies_base64 and cookies_base64.strip():
+        return "request"
+    if youtube_cookies_configured():
+        return "server"
+    return "none"
+
+
+def bot_check_message(cookies_base64: str | None = None) -> str:
+    """Build a bot-check error message that states whether cookies were applied."""
+    source = cookies_source(cookies_base64)
+    if source == "request":
+        return (
+            "YouTube blocked this request (bot check) even though your uploaded cookies "
+            "were applied. That points at the server's IP being flagged by YouTube rather "
+            "than a cookie problem. Try re-exporting fresh cookies while signed in; if it "
+            "still fails, the server needs a PO token or a non-datacenter IP."
+        )
+    if source == "server":
+        return (
+            "YouTube blocked this request (bot check) even though server cookies "
+            "(YOUTUBE_COOKIES_BASE64) were applied. The server's IP is likely flagged by "
+            "YouTube. Re-export fresh cookies, or add a PO token / non-datacenter IP."
+        )
+    return (
+        "YouTube blocked this request (bot check). No YouTube cookies were sent with this "
+        "request. Add YouTube cookies in DgLabs Settings, or set YOUTUBE_COOKIES_BASE64 on "
+        "Railway."
+    )

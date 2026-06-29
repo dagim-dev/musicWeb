@@ -12,6 +12,7 @@ from app.models.download import DownloadMode, JobSnapshot, JobStage, TrackStatus
 from app.services.converter import convert_to_mp3
 from app.services.metadata import build_filename, fetch_thumbnail, tag_mp3
 from app.services.youtube import analyze_url, best_thumbnail_url, cleanup_dir, download_audio, resolve_artist_title
+from app.services.ytdlp_config import bot_check_message, is_bot_check_error
 from app.sockets.events import emit_job_complete, emit_job_started, emit_track_complete, emit_track_error, emit_track_progress
 
 
@@ -236,11 +237,8 @@ class JobManager:
         except Exception as exc:
             track.stage = JobStage.error
             error = str(exc)
-            if "not a bot" in error.lower() or "sign in to confirm" in error.lower():
-                error = (
-                    "YouTube blocked this download (bot check). "
-                    "Add YouTube cookies in DgLabs Settings, or set YOUTUBE_COOKIES_BASE64 on Railway."
-                )
+            if is_bot_check_error(error):
+                error = bot_check_message(job.youtube_cookies_base64)
             track.error = error
             await emit_track_error(job.job_id, track.index, error)
 
