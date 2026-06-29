@@ -78,6 +78,7 @@ Click **Always Allow** when macOS asks for Keychain access.
 
 | Problem | Fix |
 |---------|-----|
+| Still get bot check **after** valid upload (error says "even though your uploaded cookies were applied") | The server's IP is flagged by YouTube. Set up a PO token provider — see [`POT_PROVIDER.md`](./POT_PROVIDER.md) |
 | Still get bot check after upload | Re-export while signed into YouTube; cookies expire every few weeks |
 | Upload rejected / invalid file | Use extension **Export** on youtube.com; prefer `.txt` over PDF |
 | PDF upload fails validation | Re-export as `.txt` instead of Print to PDF |

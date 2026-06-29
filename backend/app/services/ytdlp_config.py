@@ -68,19 +68,33 @@ def cookiefile_path(cookies_base64: str | None = None) -> Path | None:
     return _COOKIE_PATH
 
 
+def pot_provider_configured() -> bool:
+    settings = get_settings()
+    return bool(settings.pot_provider_base_url and settings.pot_provider_base_url.strip())
+
+
 def build_ydl_opts(
     extra: dict[str, Any] | None = None,
     cookies_base64: str | None = None,
 ) -> dict[str, Any]:
+    extractor_args: dict[str, Any] = {
+        "youtube": {
+            # web first when cookies are present; android helps on some networks.
+            "player_client": ["web", "android", "tv_embedded"],
+        }
+    }
+
+    settings = get_settings()
+    if settings.pot_provider_base_url and settings.pot_provider_base_url.strip():
+        # Point the bgutil PO token provider plugin at the running HTTP server.
+        extractor_args["youtubepot-bgutilhttp"] = {
+            "base_url": [settings.pot_provider_base_url.strip()],
+        }
+
     opts: dict[str, Any] = {
         "quiet": True,
         "no_warnings": True,
-        "extractor_args": {
-            "youtube": {
-                # web first when cookies are present; android helps on some networks.
-                "player_client": ["web", "android", "tv_embedded"],
-            }
-        },
+        "extractor_args": extractor_args,
     }
 
     cookie_path = cookiefile_path(cookies_base64)
@@ -88,12 +102,13 @@ def build_ydl_opts(
         opts["cookiefile"] = str(cookie_path)
 
     if extra:
+        extra_extractor_args = extra.get("extractor_args")
         opts.update(extra)
-        if "extractor_args" in extra:
-            opts["extractor_args"] = {
-                **opts.get("extractor_args", {}),
-                **extra["extractor_args"],
-            }
+        if extra_extractor_args:
+            merged = {**extractor_args}
+            for key, value in extra_extractor_args.items():
+                merged[key] = {**merged.get(key, {}), **value}
+            opts["extractor_args"] = merged
 
     return opts
 
