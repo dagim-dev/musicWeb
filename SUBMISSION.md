@@ -1,8 +1,8 @@
 # DgLabs — University Submission Package
 
-> **Live demo URL:** https://music-web-dagimak.vercel.app  
+> **Local demo URL:** http://YOUR-MAC-LAN-IP:5173  
 > **Repository:** https://github.com/dagim-dev/musicWeb  
-> **API:** https://tunefetch-production.up.railway.app/api/v1/health
+> **API:** http://127.0.0.1:8000/api/v1/health
 
 ---
 
@@ -10,22 +10,22 @@
 
 DgLabs is an **Android-first Progressive Web App** that downloads YouTube audio as **320 kbps MP3** files with full **ID3v2.3 metadata** (artist, album, track number, embedded cover art). Files save to the device Downloads folder and appear in **Samsung Music** after a media scan.
 
-Built as a full-stack university project: React/Vite frontend on Vercel, FastAPI media pipeline on Railway, real-time progress via Socket.IO.
+Built as a full-stack university project: React/Vite frontend, FastAPI media pipeline, and real-time progress via Socket.IO, all run locally on a Mac and reached from a phone over the same Wi‑Fi network.
 
 ---
 
 ## Milestone checklist (all verified)
 
-| # | Milestone | Status |
-|---|-----------|--------|
-| M0 | Dev environment — health OK, FFmpeg detected | ✅ |
-| M1 | Paste URL → MP3 in Android Downloads with tags | ✅ |
-| M2 | Add to Home Screen → standalone PWA | ✅ |
-| M3 | Playlist/album download with per-track progress | ✅ |
-| M4 | Library visible offline (local metadata) | ✅ |
-| M5 | Re-paste URL → duplicate detection modal | ✅ |
-| M6 | Public Vercel + Railway deployment | ✅ |
-| M7 | 3-minute demo flow (install → download → Samsung Music) | ✅ |
+| #   | Milestone                                               | Status |
+| --- | ------------------------------------------------------- | ------ |
+| M0  | Dev environment — health OK, FFmpeg detected            | ✅     |
+| M1  | Paste URL → MP3 in Android Downloads with tags          | ✅     |
+| M2  | Add to Home Screen → standalone PWA                     | ✅     |
+| M3  | Playlist/album download with per-track progress         | ✅     |
+| M4  | Library visible offline (local metadata)                | ✅     |
+| M5  | Re-paste URL → duplicate detection modal                | ✅     |
+| M6  | Local LAN access from phone browser                     | ✅     |
+| M7  | 3-minute demo flow (install → download → Samsung Music) | ✅     |
 
 ---
 
@@ -33,14 +33,14 @@ Built as a full-stack university project: React/Vite frontend on Vercel, FastAPI
 
 ```mermaid
 flowchart TB
-    subgraph client [Android PWA — Vercel]
+    subgraph client [Android PWA — local browser]
         UI[React UI]
         Zustand[Zustand Queue]
         Dexie[Dexie IndexedDB]
         SW[Service Worker]
     end
 
-    subgraph server [FastAPI — Railway]
+    subgraph server [FastAPI — local Mac]
         API[REST API]
         SIO[Socket.IO]
         YTDLP[yt-dlp]
@@ -57,15 +57,15 @@ flowchart TB
 
 ### Tech stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | React 19, Vite, TypeScript, Tailwind CSS v4 |
-| Client state | Zustand, TanStack Query, Dexie.js |
-| PWA | vite-plugin-pwa, Workbox, install prompt |
-| Backend | FastAPI, python-socketio, uvicorn |
-| Media | yt-dlp, FFmpeg (libmp3lame 320k), mutagen, Pillow |
-| Security | CORS origin lock, slowapi rate limits |
-| Deploy | Vercel (CDN frontend), Railway (Docker backend) |
+| Layer        | Technology                                        |
+| ------------ | ------------------------------------------------- |
+| Frontend     | React 19, Vite, TypeScript, Tailwind CSS v4       |
+| Client state | Zustand, TanStack Query, Dexie.js                 |
+| PWA          | vite-plugin-pwa, Workbox, install prompt          |
+| Backend      | FastAPI, python-socketio, uvicorn                 |
+| Media        | yt-dlp, FFmpeg (libmp3lame 320k), mutagen, Pillow |
+| Security     | CORS origin lock, slowapi rate limits             |
+| Workflow     | Local dev + same-Wi‑Fi access                     |
 
 ---
 
@@ -90,8 +90,8 @@ See [`DEMO.md`](./DEMO.md) for the full presenter script.
 
 **Quick flow:**
 
-1. Open https://music-web-dagimak.vercel.app on Android Chrome
-2. Install to Home Screen → launch standalone
+1. Open `http://YOUR-MAC-LAN-IP:5173` on Android Chrome
+2. Install to Home Screen if supported by the browser
 3. Paste a YouTube URL → Analyze → Add to Queue
 4. Show per-track progress stages
 5. Tap **Open Samsung Music** → verify artist, album, cover art
@@ -101,15 +101,15 @@ See [`DEMO.md`](./DEMO.md) for the full presenter script.
 
 ## API endpoints
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| GET | `/api/v1/health` | Server status, FFmpeg, yt-dlp version |
-| POST | `/api/v1/analyze` | Parse YouTube URL |
-| POST | `/api/v1/jobs` | Start download job |
-| GET | `/api/v1/jobs/{id}` | Job status (polling) |
-| GET | `/api/v1/jobs/{id}/tracks/{n}/file` | MP3 download |
-| GET | `/api/v1/jobs/{id}/zip` | Playlist ZIP |
-| DELETE | `/api/v1/jobs/{id}` | Cancel job |
+| Method | Path                                | Purpose                               |
+| ------ | ----------------------------------- | ------------------------------------- |
+| GET    | `/api/v1/health`                    | Server status, FFmpeg, yt-dlp version |
+| POST   | `/api/v1/analyze`                   | Parse YouTube URL                     |
+| POST   | `/api/v1/jobs`                      | Start download job                    |
+| GET    | `/api/v1/jobs/{id}`                 | Job status (polling)                  |
+| GET    | `/api/v1/jobs/{id}/tracks/{n}/file` | MP3 download                          |
+| GET    | `/api/v1/jobs/{id}/zip`             | Playlist ZIP                          |
+| DELETE | `/api/v1/jobs/{id}`                 | Cancel job                            |
 
 ---
 
@@ -121,7 +121,7 @@ docker compose up --build
 # Backend:  http://localhost:8000/api/v1/health
 ```
 
-See [`README.md`](./README.md) and [`DEPLOY.md`](./DEPLOY.md) for full setup.
+See [`README.md`](./README.md) for the local setup and LAN access notes.
 
 ---
 
@@ -129,7 +129,7 @@ See [`README.md`](./README.md) and [`DEPLOY.md`](./DEPLOY.md) for full setup.
 
 - PWA saves to Downloads via browser pipeline — not direct Samsung Music library injection
 - 320 kbps re-encodes best available YouTube source (cannot exceed source quality)
-- Cloud downloads require YouTube session cookies — upload in **Settings → YouTube Session** (extension export) or set `YOUTUBE_COOKIES_BASE64` on Railway for all users (see [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md))
+- Downloads may require local device cookies for YouTube sessions — upload in **Settings → YouTube Session** (see [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md))
 - No user accounts or in-app audio player (out of scope)
 
 ---

@@ -2,18 +2,18 @@
 
 ## Setup (before presenting)
 
-**Production (recommended for submission):**
+**Local LAN demo (recommended):**
 
-1. Open **https://music-web-dagimak.vercel.app** on your Android phone (Chrome).
-2. Confirm **Settings** shows API ok, FFmpeg, yt-dlp, and **YouTube cookies (this device): Configured**.
+1. Start the backend and frontend on your Mac.
+2. Open `http://YOUR-MAC-LAN-IP:5173` on your Android phone (Chrome) while both devices are on the same Wi‑Fi network.
+3. Confirm **Settings** shows API ok, FFmpeg, yt-dlp, and **YouTube cookies (this device): Configured** if you want to test downloads that require a signed-in session.
    - If missing: export `cookies.txt` with the Chrome extension on a computer, upload in **Settings → YouTube Session** — see [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md).
-   - Server cookies “Missing” on Railway is OK when this device has cookies set.
 
 **Local fallback:**
 
-1. Start the stack: `docker compose up --build` (or backend + frontend dev servers).
-2. Open http://localhost:5173 on your Android phone (same Wi‑Fi) or use Chrome DevTools mobile emulation.
-3. Confirm backend health at `/api/v1/health` shows FFmpeg and **yt-dlp 2026.6.0+**.
+1. Start the stack with `docker compose up --build` (or run backend + frontend dev servers directly).
+2. Open `http://localhost:5173` on the same Mac or use Chrome DevTools mobile emulation.
+3. Confirm the health endpoint at `/api/v1/health` shows FFmpeg and **yt-dlp 2026.6.0+**.
 
 ## Script
 
@@ -23,7 +23,7 @@
 
 - Show the **Install App** banner
 - Tap Install → Add to Home Screen
-- Launch from home screen — point out **no browser URL bar** (standalone mode)
+- Launch from home screen — point out **standalone mode** if available
 
 ### 2. Download a single track (45 seconds)
 
@@ -64,11 +64,11 @@
 
 ## Troubleshooting
 
-| Issue | Fix |
-|-------|-----|
-| Install banner missing | Use Chrome on Android; ensure HTTPS (Vercel) or localhost |
-| “Failed to fetch” on production | CORS — see [DEPLOY.md](./DEPLOY.md); hard-refresh Vercel app |
-| “Sign in to confirm you’re not a bot” | Settings → YouTube Session → upload cookies (`.txt` preferred; `.pdf` supported) — [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md) |
-| Backend unreachable (local) | Check `docker compose ps` and health endpoint |
-| Download fails (403 / format not available) | Local: Python 3.11+ and yt-dlp ≥ 2026.6.0. Cloud: cookies + redeploy Railway. |
-| Samsung Music doesn't show track | Wait for media scan, or check Downloads folder |
+| Issue                                       | Fix                                                                                                                                       |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Install banner missing                      | Use Chrome on Android; local HTTP may behave differently from HTTPS                                                                       |
+| “Failed to fetch” on local demo             | Check the LAN IP, confirm the backend is running, and ensure the backend CORS list includes your Mac’s address                            |
+| “Sign in to confirm you’re not a bot”       | Settings → YouTube Session → upload cookies (`.txt` preferred; `.pdf` supported) — [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md) |
+| Backend unreachable (local)                 | Check `docker compose ps` or confirm `uvicorn` is running on port 8000                                                                    |
+| Download fails (403 / format not available) | Ensure Python 3.11+ and yt-dlp ≥ 2026.6.0. If needed, add cookies for the device.                                                         |
+| Samsung Music doesn't show track            | Wait for media scan, or check Downloads folder                                                                                            |
