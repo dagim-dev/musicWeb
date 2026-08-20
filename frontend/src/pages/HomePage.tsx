@@ -9,7 +9,6 @@ import {
 } from '@/api/client'
 import { InstallBanner } from '@/components/download/InstallBanner'
 import { AnalyzeSkeleton } from '@/components/download/AnalyzeSkeleton'
-import { OnboardingCarousel } from '@/components/download/OnboardingCarousel'
 import { QueueItem } from '@/components/download/QueueItem'
 import { TrackSelectList } from '@/components/download/TrackSelectList'
 import { UrlInput } from '@/components/download/UrlInput'
@@ -240,7 +239,6 @@ export function HomePage() {
       </header>
 
       <InstallBanner />
-      <OnboardingCarousel />
 
       <Card>
         <UrlInput
