@@ -1,5 +1,4 @@
 import { API_BASE } from './config'
-import { getSetting } from '@/db/libraryRepository'
 
 export interface TrackEntry {
   id: string
@@ -51,27 +50,21 @@ export interface JobSnapshot {
   zip_ready: boolean
 }
 
-async function apiHeaders(extra?: HeadersInit): Promise<HeadersInit> {
-  const cookies = (await getSetting('youtubeCookiesBase64', '')).trim()
+function apiHeaders(extra?: HeadersInit): HeadersInit {
   return {
     'Content-Type': 'application/json',
-    ...(cookies ? { 'X-YouTube-Cookies-Base64': cookies } : {}),
     ...(extra ?? {}),
   }
 }
 
 function formatApiError(detail: unknown, status: number): string {
-  const message = typeof detail === 'string' ? detail : `Request failed (${status})`
-  if (message.toLowerCase().includes('not a bot') || message.toLowerCase().includes('sign in to confirm')) {
-    return 'YouTube blocked this download. Settings → YouTube Session → upload cookies.txt (see extension steps).'
-  }
-  return message
+  return typeof detail === 'string' ? detail : `Request failed (${status})`
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
     ...init,
-    headers: await apiHeaders(init?.headers),
+    headers: apiHeaders(init?.headers),
   })
 
   if (!response.ok) {
@@ -110,13 +103,4 @@ export function trackFileUrl(jobId: string, index: number) {
 
 export function zipFileUrl(jobId: string) {
   return `${API_BASE}/api/v1/jobs/${jobId}/zip`
-}
-
-export function healthCheck() {
-  return request<{
-    status: string
-    ffmpeg: string | null
-    ytdlp_version: string
-    youtube_cookies: boolean
-  }>('/api/v1/health')
 }

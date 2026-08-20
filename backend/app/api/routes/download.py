@@ -7,10 +7,10 @@ from fastapi.responses import FileResponse, StreamingResponse
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-from app.api.deps import get_client_ip, get_youtube_cookies_base64
-from app.services.zip_builder import iter_zip_stream
+from app.api.deps import get_client_ip
 from app.models.download import CreateJobRequest, CreateJobResponse, DownloadMode, JobSnapshot, JobStage
 from app.services.job_manager import job_manager
+from app.services.zip_builder import iter_zip_stream
 
 router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
@@ -20,14 +20,12 @@ limiter = Limiter(key_func=get_remote_address)
 @limiter.limit("20/minute")
 async def create_job(request: Request, body: CreateJobRequest) -> CreateJobResponse:
     client_ip = get_client_ip(request)
-    cookies_base64 = get_youtube_cookies_base64(request)
     try:
         job = await job_manager.create_job(
             body.url,
             body.entry_ids,
             body.mode,
             client_ip,
-            cookies_base64=cookies_base64,
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

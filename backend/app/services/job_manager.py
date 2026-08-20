@@ -12,7 +12,6 @@ from app.models.download import DownloadMode, JobSnapshot, JobStage, TrackStatus
 from app.services.converter import convert_to_mp3
 from app.services.metadata import build_filename, fetch_thumbnail, tag_mp3
 from app.services.youtube import analyze_url, best_thumbnail_url, cleanup_dir, download_audio, resolve_artist_title
-from app.services.ytdlp_config import bot_check_message, is_bot_check_error
 from app.sockets.events import emit_job_complete, emit_job_started, emit_track_complete, emit_track_error, emit_track_progress
 
 
@@ -28,7 +27,6 @@ class JobRecord:
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     cancelled: bool = False
     task: asyncio.Task | None = None
-    youtube_cookies_base64: str | None = None
 
     @property
     def job_dir(self) -> Path:
@@ -68,7 +66,6 @@ class JobManager:
         entry_ids: list[str] | None,
         mode: DownloadMode,
         client_ip: str,
-        cookies_base64: str | None = None,
     ) -> JobRecord:
         settings = get_settings()
         async with self._lock:
@@ -76,7 +73,7 @@ class JobManager:
             if len(active) >= settings.max_concurrent_jobs_per_ip:
                 raise ValueError("Too many concurrent jobs. Please wait for current downloads to finish.")
 
-        analyzed = analyze_url(url, cookies_base64=cookies_base64)
+        analyzed = analyze_url(url)
         selected = analyzed.entries
         if entry_ids:
             id_set = set(entry_ids)
@@ -106,7 +103,6 @@ class JobManager:
             album=analyzed.album or analyzed.title,
             status="pending",
             tracks=tracks,
-            youtube_cookies_base64=cookies_base64,
         )
         self._jobs[job_id] = job
         async with self._lock:
@@ -197,7 +193,6 @@ class JobManager:
                 video_url,
                 track_dir,
                 None,
-                job.youtube_cookies_base64,
             )
 
             artist, title = resolve_artist_title(video_info)
@@ -236,11 +231,8 @@ class JobManager:
             await emit_track_complete(job.job_id, track.index, mp3_name, download_url, artist, title)
         except Exception as exc:
             track.stage = JobStage.error
-            error = str(exc)
-            if is_bot_check_error(error):
-                error = bot_check_message(job.youtube_cookies_base64)
-            track.error = error
-            await emit_track_error(job.job_id, track.index, error)
+            track.error = str(exc)
+            await emit_track_error(job.job_id, track.index, track.error)
 
 
 job_manager = JobManager()

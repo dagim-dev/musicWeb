@@ -10,7 +10,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from socketio import ASGIApp
 
-from app.api.routes import analyze, download, health
+from app.api.routes import analyze, download
 from app.config import get_settings
 from app.services.job_manager import job_manager
 from app.sockets.events import sio
@@ -44,14 +44,12 @@ def create_app() -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origin_list,
-        allow_origin_regex=r"https://.*\.vercel\.app",
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
 
     prefix = settings.api_prefix
-    app.include_router(health.router, prefix=prefix, tags=["health"])
     app.include_router(analyze.router, prefix=prefix, tags=["analyze"])
     app.include_router(download.router, prefix=prefix, tags=["jobs"])
 

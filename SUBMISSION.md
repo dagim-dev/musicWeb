@@ -2,7 +2,7 @@
 
 > **Local demo URL:** http://YOUR-MAC-LAN-IP:5173  
 > **Repository:** https://github.com/dagim-dev/musicWeb  
-> **API:** http://127.0.0.1:8000/api/v1/health
+> **Backend:** http://127.0.0.1:8000/api/v1
 
 ---
 
@@ -18,7 +18,7 @@ Built as a full-stack university project: React/Vite frontend, FastAPI media pip
 
 | #   | Milestone                                               | Status |
 | --- | ------------------------------------------------------- | ------ |
-| M0  | Dev environment — health OK, FFmpeg detected            | ✅     |
+| M0  | Dev environment — backend running and media tools ready | ✅     |
 | M1  | Paste URL → MP3 in Android Downloads with tags          | ✅     |
 | M2  | Add to Home Screen → standalone PWA                     | ✅     |
 | M3  | Playlist/album download with per-track progress         | ✅     |
@@ -103,7 +103,6 @@ See [`DEMO.md`](./DEMO.md) for the full presenter script.
 
 | Method | Path                                | Purpose                               |
 | ------ | ----------------------------------- | ------------------------------------- |
-| GET    | `/api/v1/health`                    | Server status, FFmpeg, yt-dlp version |
 | POST   | `/api/v1/analyze`                   | Parse YouTube URL                     |
 | POST   | `/api/v1/jobs`                      | Start download job                    |
 | GET    | `/api/v1/jobs/{id}`                 | Job status (polling)                  |
@@ -118,7 +117,7 @@ See [`DEMO.md`](./DEMO.md) for the full presenter script.
 ```bash
 docker compose up --build
 # Frontend: http://localhost:5173
-# Backend:  http://localhost:8000/api/v1/health
+# Backend:  http://localhost:8000/api/v1
 ```
 
 See [`README.md`](./README.md) for the local setup and LAN access notes.
@@ -129,7 +128,7 @@ See [`README.md`](./README.md) for the local setup and LAN access notes.
 
 - PWA saves to Downloads via browser pipeline — not direct Samsung Music library injection
 - 320 kbps re-encodes best available YouTube source (cannot exceed source quality)
-- Downloads may require local device cookies for YouTube sessions — upload in **Settings → YouTube Session** (see [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md))
+- Some YouTube URLs may fail if the upstream extractor changes or the source is restricted
 - No user accounts or in-app audio player (out of scope)
 
 ---

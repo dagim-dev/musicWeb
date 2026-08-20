@@ -88,13 +88,12 @@ def _entry_from_info(info: dict[str, Any], album: str | None, index: int | None)
     )
 
 
-def analyze_url(url: str, cookies_base64: str | None = None) -> AnalyzeResponse:
+def analyze_url(url: str) -> AnalyzeResponse:
     ydl_opts = build_ydl_opts(
         {
             "extract_flat": "in_playlist",
             "skip_download": True,
         },
-        cookies_base64=cookies_base64,
     )
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -113,9 +112,7 @@ def analyze_url(url: str, cookies_base64: str | None = None) -> AnalyzeResponse:
             if entry.get("url") is None and entry.get("id"):
                 entry = {**entry, "url": f"https://www.youtube.com/watch?v={entry['id']}"}
             if entry.get("_type") == "url" and not entry.get("title"):
-                with yt_dlp.YoutubeDL(
-                    build_ydl_opts({"skip_download": True}, cookies_base64=cookies_base64)
-                ) as ydl:
+                with yt_dlp.YoutubeDL(build_ydl_opts({"skip_download": True})) as ydl:
                     entry = ydl.extract_info(entry["url"], download=False) or entry
             entries.append(_entry_from_info(entry, album, idx))
 
@@ -138,7 +135,6 @@ def download_audio(
     url: str,
     output_dir: Path,
     progress_hook: Any | None = None,
-    cookies_base64: str | None = None,
 ) -> tuple[Path, dict[str, Any]]:
     output_dir.mkdir(parents=True, exist_ok=True)
     outtmpl = str(output_dir / "audio.%(ext)s")
@@ -149,7 +145,6 @@ def download_audio(
             "outtmpl": outtmpl,
             "noplaylist": True,
         },
-        cookies_base64=cookies_base64,
     )
     if progress_hook:
         ydl_opts["progress_hooks"] = [progress_hook]
@@ -165,13 +160,6 @@ def download_audio(
         raise FileNotFoundError("Downloaded audio file not found")
 
     return candidates[0], info
-
-
-def get_ytdlp_version() -> str:
-    try:
-        return yt_dlp.version.__version__
-    except Exception:
-        return "unknown"
 
 
 def cleanup_dir(path: Path) -> None:

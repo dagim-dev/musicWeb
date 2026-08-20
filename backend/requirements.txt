@@ -2,7 +2,6 @@ fastapi>=0.115.0
 uvicorn[standard]>=0.32.0
 python-socketio>=5.11.0
 yt-dlp>=2026.6.0
-bgutil-ytdlp-pot-provider>=1.1.0
 mutagen>=1.47.0
 pillow>=11.0.0
 slowapi>=0.1.9

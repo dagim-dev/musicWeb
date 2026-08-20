@@ -102,7 +102,7 @@ Custom plugin source: `android/app/src/main/java/com/dglabs/tunefetch/DgLabsSave
 
 | Issue                             | Fix                                                                                                                                 |
 | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Downloads fail in APK (bot check) | Upload cookies in Settings → YouTube Session or add cookies for the device — [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md) |
+| Downloads fail in APK             | Verify `VITE_API_URL` / `VITE_SOCKET_URL` point to your Mac's LAN IP and confirm the backend is running                            |
 | Gradle sync fails                 | Open Android Studio → SDK Manager → install API 34                                                                                  |
 | Files not in Samsung Music        | Open Samsung Music once; it scans `Downloads/DgLabs/`                                                                               |
 | Save permission error             | Reinstall APK; Android 10+ does not need storage permission for MediaStore Downloads                                                |

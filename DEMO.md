@@ -6,14 +6,13 @@
 
 1. Start the backend and frontend on your Mac.
 2. Open `http://YOUR-MAC-LAN-IP:5173` on your Android phone (Chrome) while both devices are on the same Wi‑Fi network.
-3. Confirm **Settings** shows API ok, FFmpeg, yt-dlp, and **YouTube cookies (this device): Configured** if you want to test downloads that require a signed-in session.
-   - If missing: export `cookies.txt` with the Chrome extension on a computer, upload in **Settings → YouTube Session** — see [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md).
+3. Open **Settings** once to confirm the theme controls, backup tools, and download-folder guidance are available.
 
 **Local fallback:**
 
 1. Start the stack with `docker compose up --build` (or run backend + frontend dev servers directly).
 2. Open `http://localhost:5173` on the same Mac or use Chrome DevTools mobile emulation.
-3. Confirm the health endpoint at `/api/v1/health` shows FFmpeg and **yt-dlp 2026.6.0+**.
+3. Confirm the app can analyze a known public YouTube URL before you begin the live presentation.
 
 ## Script
 
@@ -68,7 +67,7 @@
 | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | Install banner missing                      | Use Chrome on Android; local HTTP may behave differently from HTTPS                                                                       |
 | “Failed to fetch” on local demo             | Check the LAN IP, confirm the backend is running, and ensure the backend CORS list includes your Mac’s address                            |
-| “Sign in to confirm you’re not a bot”       | Settings → YouTube Session → upload cookies (`.txt` preferred; `.pdf` supported) — [`docs/YOUTUBE_COOKIES.md`](./docs/YOUTUBE_COOKIES.md) |
+| “Sign in to confirm you’re not a bot”       | Try a different public video or playlist and confirm `yt-dlp` is up to date on the Mac backend                                           |
 | Backend unreachable (local)                 | Check `docker compose ps` or confirm `uvicorn` is running on port 8000                                                                    |
-| Download fails (403 / format not available) | Ensure Python 3.11+ and yt-dlp ≥ 2026.6.0. If needed, add cookies for the device.                                                         |
+| Download fails (403 / format not available) | Ensure Python 3.11+ and a current `yt-dlp` build are installed on the backend                                                             |
 | Samsung Music doesn't show track            | Wait for media scan, or check Downloads folder                                                                                            |
