@@ -1,4 +1,4 @@
-import { db, type TrackRecord } from './schema'
+import { db, type PlaybackKind, type TrackRecord } from './schema'
 
 export async function findTrackByYoutubeId(youtubeId: string): Promise<TrackRecord | undefined> {
   return db.tracks.where('youtubeId').equals(youtubeId).first()
@@ -11,6 +11,17 @@ export async function findDuplicateTracks(youtubeIds: string[]): Promise<TrackRe
 
 export async function addTrack(track: TrackRecord): Promise<void> {
   await db.tracks.put(track)
+}
+
+export async function getTrack(id: string): Promise<TrackRecord | undefined> {
+  return db.tracks.get(id)
+}
+
+export async function updateTrack(
+  id: string,
+  patch: Partial<TrackRecord>,
+): Promise<void> {
+  await db.tracks.update(id, patch)
 }
 
 export async function addDownloadHistory(entry: {
@@ -64,12 +75,27 @@ export async function setSetting(key: string, value: string): Promise<void> {
 
 export async function exportLibrary(): Promise<string> {
   const tracks = await db.tracks.toArray()
-  return JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), tracks }, null, 2)
+  const serializable = tracks.map((track) => ({
+    ...track,
+    thumbnailBlob: undefined,
+    fileHandle: undefined,
+    playbackKind: 'unavailable' as PlaybackKind,
+    fileAvailable: false,
+  }))
+  return JSON.stringify({ version: 2, exportedAt: new Date().toISOString(), tracks: serializable }, null, 2)
 }
 
 export async function importLibrary(json: string): Promise<number> {
   const parsed = JSON.parse(json) as { tracks?: TrackRecord[] }
-  const tracks = parsed.tracks ?? []
+  const tracks = (parsed.tracks ?? []).map((track) => ({
+    ...track,
+    playbackKind: 'unavailable' as PlaybackKind,
+    nativePath: track.nativePath ?? null,
+    nativeUri: track.nativeUri ?? null,
+    fileHandle: undefined,
+    fileAvailable: false,
+    thumbnailBlob: undefined,
+  }))
   await db.tracks.bulkPut(tracks)
   return tracks.length
 }

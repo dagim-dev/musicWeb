@@ -1,14 +1,13 @@
+import { SaveCancelledError } from '@/utils/errors'
 import { isNativeApp, saveBlobToDgLabs } from '@/utils/nativeFileSave'
 
-async function saveBlobWeb(blob: Blob, fileName: string, mimeType = 'audio/mpeg') {
-  const savePicker = (
-    window as Window & {
-      showSaveFilePicker?: (options: {
-        suggestedName: string
-        types: Array<{ description: string; accept: Record<string, string[]> }>
-      }) => Promise<FileSystemFileHandle>
-    }
-  ).showSaveFilePicker
+export type SaveResult =
+  | { kind: 'native'; path: string; uri: string | null }
+  | { kind: 'file-handle'; handle: FileSystemFileHandle }
+  | { kind: 'session-blob'; blob: Blob }
+
+async function saveBlobWeb(blob: Blob, fileName: string, mimeType = 'audio/mpeg'): Promise<SaveResult> {
+  const savePicker = window.showSaveFilePicker
 
   if (savePicker) {
     try {
@@ -19,9 +18,11 @@ async function saveBlobWeb(blob: Blob, fileName: string, mimeType = 'audio/mpeg'
       const writable = await handle.createWritable()
       await writable.write(blob)
       await writable.close()
-      return
+      return { kind: 'file-handle', handle }
     } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') return
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        throw new SaveCancelledError()
+      }
     }
   }
 
@@ -34,13 +35,14 @@ async function saveBlobWeb(blob: Blob, fileName: string, mimeType = 'audio/mpeg'
   anchor.click()
   document.body.removeChild(anchor)
   URL.revokeObjectURL(url)
+  return { kind: 'session-blob', blob }
 }
 
-export async function saveBlob(blob: Blob, fileName: string, mimeType = 'audio/mpeg') {
+export async function saveBlob(blob: Blob, fileName: string, mimeType = 'audio/mpeg'): Promise<SaveResult> {
   if (isNativeApp()) {
-    await saveBlobToDgLabs(blob, fileName)
-    return
+    const saved = await saveBlobToDgLabs(blob, fileName)
+    return { kind: 'native', path: saved.path, uri: saved.uri }
   }
 
-  await saveBlobWeb(blob, fileName, mimeType)
+  return saveBlobWeb(blob, fileName, mimeType)
 }

@@ -1,5 +1,6 @@
 import type { TrackRecord } from '@/db/schema'
 import { Button } from '@/components/ui/Button'
+import { Sheet } from '@/components/ui/Sheet'
 
 interface DuplicateModalProps {
   duplicates: TrackRecord[]
@@ -9,21 +10,12 @@ interface DuplicateModalProps {
 
 export function DuplicateModal({ duplicates, onContinue, onCancel }: DuplicateModalProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-4 sm:items-center">
-      <div className="w-full max-w-md rounded-2xl border border-border bg-surface-elevated p-5 shadow-2xl">
-        <h2 className="text-lg font-semibold text-text-primary">Already downloaded</h2>
-        <p className="mt-2 text-sm text-text-secondary">
-          {duplicates.length} track{duplicates.length === 1 ? '' : 's'} in your selection already
-          exist in your library.
-        </p>
-        <ul className="mt-3 max-h-40 space-y-2 overflow-y-auto">
-          {duplicates.map((track) => (
-            <li key={track.id} className="rounded-lg bg-surface-muted px-3 py-2 text-sm">
-              {track.artist} — {track.title}
-            </li>
-          ))}
-        </ul>
-        <div className="mt-4 flex gap-2">
+    <Sheet
+      open
+      onClose={onCancel}
+      title="Already in your library"
+      footer={
+        <div className="flex gap-2">
           <Button variant="secondary" fullWidth onClick={onCancel}>
             Skip duplicates
           </Button>
@@ -31,7 +23,19 @@ export function DuplicateModal({ duplicates, onContinue, onCancel }: DuplicateMo
             Download anyway
           </Button>
         </div>
-      </div>
-    </div>
+      }
+    >
+      <p className="text-sm text-text-secondary">
+        {duplicates.length} track{duplicates.length === 1 ? '' : 's'} in this selection already exist
+        locally. Skip them, or download again if you want a fresh copy.
+      </p>
+      <ul className="mt-3 max-h-40 space-y-2 overflow-y-auto">
+        {duplicates.map((track) => (
+          <li key={track.id} className="rounded-lg bg-surface-muted px-3 py-2 text-sm">
+            {track.artist} — {track.title}
+          </li>
+        ))}
+      </ul>
+    </Sheet>
   )
 }

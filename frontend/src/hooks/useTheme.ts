@@ -4,8 +4,8 @@ import { getSetting, setSetting } from '@/db/libraryRepository'
 export type ThemeMode = 'dark' | 'light' | 'system'
 
 const THEME_COLORS: Record<'dark' | 'light', string> = {
-  dark: '#0f0f12',
-  light: '#f8fafc',
+  dark: '#080808',
+  light: '#f4f0e6',
 }
 
 function resolveTheme(mode: ThemeMode): 'dark' | 'light' {

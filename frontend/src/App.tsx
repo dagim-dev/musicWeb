@@ -1,20 +1,26 @@
-import { BottomNav } from '@/components/layout/BottomNav'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { MotionConfig } from 'motion/react'
+import { AppShell } from '@/components/layout/AppShell'
 import { HomePage } from '@/pages/HomePage'
+import { LibraryPage } from '@/pages/LibraryPage'
+import { QueuePage } from '@/pages/QueuePage'
 import { SettingsPage } from '@/pages/SettingsPage'
-import { useDownloadQueueStore } from '@/stores/downloadQueueStore'
 
 function App() {
-  const activeTab = useDownloadQueueStore((s) => s.activeTab)
-  const setActiveTab = useDownloadQueueStore((s) => s.setActiveTab)
-
   return (
-    <div className="app-shell">
-      <main className="flex-1 overflow-y-auto">
-        {activeTab === 'home' ? <HomePage /> : null}
-        {activeTab === 'settings' ? <SettingsPage /> : null}
-      </main>
-      <BottomNav active={activeTab} onChange={setActiveTab} />
-    </div>
+    <MotionConfig reducedMotion="user" transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<AppShell />}>
+            <Route index element={<HomePage />} />
+            <Route path="queue" element={<QueuePage />} />
+            <Route path="library" element={<LibraryPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </MotionConfig>
   )
 }
 

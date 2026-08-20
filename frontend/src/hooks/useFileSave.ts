@@ -1,12 +1,11 @@
 import { useCallback } from 'react'
 import { trackFileUrl, zipFileUrl } from '@/api/client'
 import { addDownloadHistory, addTrack, getSetting } from '@/db/libraryRepository'
+import type { PlaybackKind, TrackRecord } from '@/db/schema'
+import { setSessionBlob } from '@/features/player/sessionBlobs'
 import { saveBlob } from '@/utils/fileSave'
 import { applyFilenameTemplate } from '@/utils/filenameTemplate'
-
-function triggerDownload(blob: Blob, fileName: string) {
-  void saveBlob(blob, fileName)
-}
+import { fetchThumbnailBlob } from '@/utils/thumbnails'
 
 export function useFileSave() {
   const saveTrackFile = useCallback(
@@ -33,20 +32,35 @@ export function useFileSave() {
         title: params.title,
         album: params.album,
       })
-      await saveBlob(blob, fileName)
+      const saved = await saveBlob(blob, fileName)
 
-      let thumbnailBlob: Blob | null = null
-      if (params.thumbnailUrl) {
-        try {
-          const thumbResponse = await fetch(params.thumbnailUrl)
-          if (thumbResponse.ok) thumbnailBlob = await thumbResponse.blob()
-        } catch {
-          thumbnailBlob = null
-        }
+      const thumbnailBlob = await fetchThumbnailBlob(params.thumbnailUrl)
+      const trackId = crypto.randomUUID()
+
+      let playbackKind: PlaybackKind = 'unavailable'
+      let nativePath: string | null = null
+      let nativeUri: string | null = null
+      let fileHandle: FileSystemFileHandle | null = null
+      let fileAvailable = false
+
+      if (saved.kind === 'native') {
+        playbackKind = 'native'
+        nativePath = saved.path
+        nativeUri = saved.uri
+        fileAvailable = true
+        setSessionBlob(trackId, blob)
+      } else if (saved.kind === 'file-handle') {
+        playbackKind = 'file-handle'
+        fileHandle = saved.handle
+        fileAvailable = true
+        setSessionBlob(trackId, blob)
+      } else {
+        playbackKind = 'session'
+        fileAvailable = true
+        setSessionBlob(trackId, blob)
       }
 
-      const trackId = crypto.randomUUID()
-      await addTrack({
+      const track: TrackRecord = {
         id: trackId,
         youtubeId: params.youtubeId,
         title: params.title,
@@ -60,8 +74,14 @@ export function useFileSave() {
         fileSize: blob.size,
         downloadedAt: new Date().toISOString(),
         sourceUrl: params.sourceUrl,
-      })
+        playbackKind,
+        nativePath,
+        nativeUri,
+        fileHandle,
+        fileAvailable,
+      }
 
+      await addTrack(track)
       await addDownloadHistory({
         id: crypto.randomUUID(),
         jobId: params.jobId,
@@ -71,7 +91,7 @@ export function useFileSave() {
         error: null,
       })
 
-      return blob
+      return track
     },
     [],
   )
@@ -84,5 +104,5 @@ export function useFileSave() {
     return blob
   }, [])
 
-  return { saveTrackFile, saveZipFile, triggerDownload }
+  return { saveTrackFile, saveZipFile }
 }

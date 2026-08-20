@@ -1,16 +1,11 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { exportLibrary, importLibrary } from '@/db/libraryRepository'
 import { useTheme, type ThemeMode } from '@/hooks/useTheme'
 import { DGLABS_FOLDER, isNativeApp } from '@/utils/nativeFileSave'
 import { openSamsungMusic } from '@/utils/samsungMusic'
-
-const themeOptions: Array<{ value: ThemeMode; label: string }> = [
-  { value: 'dark', label: 'Dark' },
-  { value: 'light', label: 'Light' },
-  { value: 'system', label: 'System' },
-]
 
 export function SettingsPage() {
   const [importMessage, setImportMessage] = useState('')
@@ -34,30 +29,29 @@ export function SettingsPage() {
   }
 
   return (
-    <div className="space-y-5 p-4 pb-6">
+    <div className="mx-auto w-full min-w-0 max-w-2xl space-y-5 p-4 pb-8 lg:p-8">
       <header>
-        <h1 className="text-2xl font-bold text-text-primary">Settings</h1>
-        <p className="mt-1 text-sm text-text-secondary">App preferences and local tools.</p>
+        <p className="text-xs font-semibold tracking-[0.22em] text-accent uppercase">Settings</p>
+        <h1 className="mt-1 text-3xl font-extrabold text-text-primary">Preferences</h1>
+        <p className="mt-2 text-sm text-text-secondary">Theme, backups, and where files land on this device.</p>
       </header>
 
       <Card className="space-y-3">
         <h2 className="text-sm font-semibold text-text-primary">Appearance</h2>
-        <p className="text-xs text-text-secondary">Choose dark, light, or match your device setting.</p>
-        <div className="grid grid-cols-3 gap-2">
-          {themeOptions.map((option) => (
-            <Button
-              key={option.value}
-              variant={theme === option.value ? 'primary' : 'secondary'}
-              onClick={() => void setTheme(option.value)}
-            >
-              {option.label}
-            </Button>
-          ))}
-        </div>
+        <SegmentedControl
+          label="Theme"
+          value={theme}
+          onChange={(value) => void setTheme(value)}
+          options={[
+            { value: 'dark' as ThemeMode, label: 'Dark' },
+            { value: 'light' as ThemeMode, label: 'Light' },
+            { value: 'system' as ThemeMode, label: 'System' },
+          ]}
+        />
       </Card>
 
       <Card className="space-y-3">
-        <h2 className="text-sm font-semibold text-text-primary">Library Backup</h2>
+        <h2 className="text-sm font-semibold text-text-primary">Library backup</h2>
         <Button variant="secondary" fullWidth onClick={() => void handleExport()}>
           Export library JSON
         </Button>
@@ -81,7 +75,7 @@ export function SettingsPage() {
         <p className="text-xs leading-relaxed text-text-secondary">
           {isNativeApp()
             ? `The Android app saves MP3 files to Downloads/${DGLABS_FOLDER}/. The folder is created automatically on first download.`
-            : `The browser PWA saves to your Downloads folder. Install the Android app (see CAPACITOR.md) to use Downloads/${DGLABS_FOLDER}/ automatically.`}
+            : `The browser PWA saves to your Downloads folder. Install the Android app to use Downloads/${DGLABS_FOLDER}/ automatically.`}
         </p>
       </Card>
 
@@ -89,7 +83,6 @@ export function SettingsPage() {
         <h2 className="text-sm font-semibold text-text-primary">Samsung Music</h2>
         <p className="mt-2 text-xs leading-relaxed text-text-secondary">
           After downloading, open Samsung Music. It scans your Downloads folder for new MP3 files.
-          Proper artist, album, and cover art tags help tracks appear correctly in your library.
         </p>
         <Button variant="secondary" fullWidth className="mt-3" onClick={openSamsungMusic}>
           Open Samsung Music

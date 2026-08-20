@@ -1,26 +1,16 @@
 import clsx from 'clsx'
 import type { TrackEntry } from '@/api/client'
+import { Artwork } from '@/components/ui/Artwork'
+import { formatDuration } from '@/utils/format'
 
-interface TrackSelectListProps {
+interface TrackPickerProps {
   entries: TrackEntry[]
   selectedIds: Set<string>
   onToggle: (id: string) => void
   onToggleAll: (selected: boolean) => void
 }
 
-function formatDuration(seconds: number | null) {
-  if (!seconds) return '--:--'
-  const mins = Math.floor(seconds / 60)
-  const secs = seconds % 60
-  return `${mins}:${secs.toString().padStart(2, '0')}`
-}
-
-export function TrackSelectList({
-  entries,
-  selectedIds,
-  onToggle,
-  onToggleAll,
-}: TrackSelectListProps) {
+export function TrackPicker({ entries, selectedIds, onToggle, onToggleAll }: TrackPickerProps) {
   const allSelected = entries.every((entry) => selectedIds.has(entry.id))
 
   return (
@@ -30,12 +20,12 @@ export function TrackSelectList({
         <button
           type="button"
           onClick={() => onToggleAll(!allSelected)}
-          className="text-xs font-medium text-accent"
+          className="text-xs font-semibold text-accent"
         >
           {allSelected ? 'Deselect all' : 'Select all'}
         </button>
       </div>
-      <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
+      <div className="max-h-80 space-y-2 overflow-y-auto pr-1">
         {entries.map((entry) => {
           const selected = selectedIds.has(entry.id)
           return (
@@ -44,21 +34,13 @@ export function TrackSelectList({
               type="button"
               onClick={() => onToggle(entry.id)}
               className={clsx(
-                'flex w-full items-center gap-3 rounded-xl border p-3 text-left transition',
+                'flex w-full items-center gap-3 rounded-xl border p-3 text-left transition duration-200',
                 selected
                   ? 'border-accent/50 bg-accent/10'
-                  : 'border-border bg-surface-muted hover:border-border/80',
+                  : 'border-border bg-surface-muted hover:border-text-secondary/30',
               )}
             >
-              {entry.thumbnail ? (
-                <img
-                  src={entry.thumbnail}
-                  alt=""
-                  className="h-12 w-12 rounded-lg object-cover"
-                />
-              ) : (
-                <div className="h-12 w-12 rounded-lg bg-surface" />
-              )}
+              <Artwork src={entry.thumbnail} className="h-12 w-12 shrink-0 rounded-lg" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-text-primary">{entry.title}</p>
                 <p className="truncate text-xs text-text-secondary">
