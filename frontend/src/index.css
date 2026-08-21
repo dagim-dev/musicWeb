@@ -68,6 +68,34 @@
   100% { background-position: 200% 0; }
 }
 
+@keyframes equalizer-idle {
+  0%, 100% { transform: scaleY(0.25); }
+  50% { transform: scaleY(0.45); }
+}
+
+@keyframes equalizer-complete {
+  0% { transform: scaleY(0.35); }
+  60% { transform: scaleY(1.05); }
+  100% { transform: scaleY(1); }
+}
+
+@keyframes fall-glyph {
+  0% {
+    transform: translateY(-8vh);
+    opacity: 0;
+  }
+  8% {
+    opacity: var(--glyph-peak-opacity, 0.32);
+  }
+  92% {
+    opacity: var(--glyph-peak-opacity, 0.32);
+  }
+  100% {
+    transform: translateY(108vh);
+    opacity: 0;
+  }
+}
+
 @layer base {
   html {
     @apply bg-surface text-text-primary antialiased;
@@ -132,6 +160,17 @@
     );
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  .animate-fall-glyph {
+    animation: fall-glyph var(--fall-duration, 16s) linear var(--fall-delay, 0s) 1 both;
+    will-change: transform, opacity;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fall-glyph {
+      animation: none;
+    }
   }
 
   .section-heading {

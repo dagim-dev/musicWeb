@@ -1,3 +1,4 @@
+import { BackgroundNotes } from '@/components/layout/BackgroundNotes'
 import { BottomNav } from '@/components/layout/BottomNav'
 import { QueueEffects } from '@/components/queue/QueueEffects'
 import { HomePage } from '@/pages/HomePage'
@@ -11,6 +12,7 @@ function App() {
 
   return (
     <div className="app-shell gradient-mesh">
+      <BackgroundNotes />
       <QueueEffects />
       <main className="flex-1 overflow-y-auto overflow-x-clip">
         {activeTab === 'home' ? <HomePage /> : null}
