@@ -1,5 +1,6 @@
 import clsx from 'clsx'
 import type { TrackEntry } from '@/api/client'
+import { Artwork } from '@/components/ui/Artwork'
 
 interface TrackSelectListProps {
   entries: TrackEntry[]
@@ -24,18 +25,18 @@ export function TrackSelectList({
   const allSelected = entries.every((entry) => selectedIds.has(entry.id))
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold text-text-primary">{entries.length} tracks found</p>
+    <div className="min-w-0 space-y-3">
+      <div className="flex min-w-0 items-center justify-between gap-2">
+        <p className="truncate text-sm font-semibold text-text-primary">{entries.length} tracks found</p>
         <button
           type="button"
           onClick={() => onToggleAll(!allSelected)}
-          className="text-xs font-medium text-accent"
+          className="shrink-0 text-xs font-medium text-accent transition hover:text-accent-hover"
         >
           {allSelected ? 'Deselect all' : 'Select all'}
         </button>
       </div>
-      <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
+      <div className="max-h-72 space-y-2 overflow-y-auto overflow-x-hidden pr-1">
         {entries.map((entry) => {
           const selected = selectedIds.has(entry.id)
           return (
@@ -44,21 +45,13 @@ export function TrackSelectList({
               type="button"
               onClick={() => onToggle(entry.id)}
               className={clsx(
-                'flex w-full items-center gap-3 rounded-xl border p-3 text-left transition',
+                'flex w-full min-w-0 items-center gap-3 rounded-xl border p-3 text-left transition-all duration-200',
                 selected
-                  ? 'border-accent/50 bg-accent/10'
-                  : 'border-border bg-surface-muted hover:border-border/80',
+                  ? 'border-accent/50 bg-accent/10 ring-1 ring-accent/30'
+                  : 'border-border bg-surface-muted hover:border-accent/20',
               )}
             >
-              {entry.thumbnail ? (
-                <img
-                  src={entry.thumbnail}
-                  alt=""
-                  className="h-12 w-12 rounded-lg object-cover"
-                />
-              ) : (
-                <div className="h-12 w-12 rounded-lg bg-surface" />
-              )}
+              <Artwork src={entry.thumbnail} alt="" size="sm" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-text-primary">{entry.title}</p>
                 <p className="truncate text-xs text-text-secondary">
@@ -67,8 +60,8 @@ export function TrackSelectList({
               </div>
               <div
                 className={clsx(
-                  'h-5 w-5 rounded-full border-2',
-                  selected ? 'border-accent bg-accent' : 'border-border',
+                  'h-5 w-5 shrink-0 rounded-full border-2 transition-all duration-200',
+                  selected ? 'border-accent bg-accent scale-110' : 'border-border',
                 )}
               />
             </button>

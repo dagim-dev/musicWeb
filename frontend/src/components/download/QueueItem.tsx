@@ -1,7 +1,8 @@
 import type { JobStage } from '@/api/client'
-import { Card } from '@/components/ui/Card'
-import { Progress } from '@/components/ui/Progress'
+import { Artwork } from '@/components/ui/Artwork'
 import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
+import { MusicProgress } from '@/components/ui/MusicProgress'
 import type { QueueJob } from '@/stores/downloadQueueStore'
 
 const stageLabels: Record<JobStage, string> = {
@@ -45,11 +46,14 @@ export function QueueItem({
   const canReorder = job.status !== 'running' && onReorder
 
   return (
-    <Card className="space-y-3">
-      <div className="flex items-start justify-between gap-3">
+    <Card className="min-w-0 space-y-4 overflow-hidden">
+      <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-text-primary">{job.title}</p>
-          <p className="text-xs text-text-secondary">
+          <p className="truncate text-sm font-semibold text-text-primary">{job.title}</p>
+          {job.album ? (
+            <p className="truncate text-xs text-text-secondary">{job.album}</p>
+          ) : null}
+          <p className="mt-1 text-xs text-text-secondary">
             {completed} / {job.tracks.length} tracks · {job.mode === 'zip' ? 'ZIP mode' : 'Individual'}
           </p>
         </div>
@@ -60,7 +64,7 @@ export function QueueItem({
                 type="button"
                 disabled={isFirst}
                 onClick={() => onReorder('up')}
-                className="rounded-lg px-2 py-1 text-xs text-text-secondary disabled:opacity-30"
+                className="rounded-lg px-2 py-1 text-xs text-text-secondary transition hover:bg-surface-muted disabled:opacity-30"
                 aria-label="Move up"
               >
                 ↑
@@ -69,7 +73,7 @@ export function QueueItem({
                 type="button"
                 disabled={isLast}
                 onClick={() => onReorder('down')}
-                className="rounded-lg px-2 py-1 text-xs text-text-secondary disabled:opacity-30"
+                className="rounded-lg px-2 py-1 text-xs text-text-secondary transition hover:bg-surface-muted disabled:opacity-30"
                 aria-label="Move down"
               >
                 ↓
@@ -77,12 +81,12 @@ export function QueueItem({
             </>
           ) : null}
           {job.status === 'running' && onCancel ? (
-            <Button variant="ghost" onClick={onCancel}>
+            <Button variant="ghost" size="compact" onClick={onCancel}>
               Cancel
             </Button>
           ) : null}
           {['complete', 'error', 'cancelled'].includes(job.status) && onDismiss ? (
-            <Button variant="ghost" onClick={onDismiss}>
+            <Button variant="ghost" size="compact" onClick={onDismiss}>
               Dismiss
             </Button>
           ) : null}
@@ -90,13 +94,29 @@ export function QueueItem({
       </div>
 
       {activeTrack ? (
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-accent">
-            {stageLabels[activeTrack.stage]} · Track {activeTrackIndex + 1} of {job.tracks.length}
-          </p>
-          <p className="truncate text-sm text-text-primary">{activeTrack.entry.title}</p>
-          <p className="text-xs text-text-secondary">{activeTrack.message}</p>
-          <Progress value={activeTrack.percent} />
+        <div
+          key={`${activeTrack.entry.id}-${activeTrack.stage}`}
+          className="animate-fade-in-up flex min-w-0 gap-4 rounded-xl border border-accent/20 bg-accent/5 p-3"
+        >
+          <Artwork
+            src={activeTrack.entry.thumbnail}
+            alt=""
+            size="lg"
+            glow
+          />
+          <div className="min-w-0 flex-1 space-y-2">
+            <p className="text-xs font-semibold text-accent">
+              {stageLabels[activeTrack.stage]} · Track {activeTrackIndex + 1} of {job.tracks.length}
+            </p>
+            <p className="truncate text-sm font-medium text-text-primary">
+              {activeTrack.entry.title}
+            </p>
+            <p className="truncate text-xs text-text-secondary">{activeTrack.message}</p>
+            <MusicProgress
+              value={activeTrack.percent}
+              stage={activeTrack.stage}
+            />
+          </div>
         </div>
       ) : null}
 

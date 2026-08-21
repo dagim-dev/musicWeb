@@ -73,32 +73,38 @@ export function LibraryPage() {
   }
 
   return (
-    <div className="space-y-5 p-4 pb-6">
+    <div className="min-w-0 space-y-5 pb-6 pt-4">
       <header>
-        <h1 className="text-2xl font-bold text-text-primary">Library</h1>
-        <p className="mt-1 text-sm text-text-secondary">
+        <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">Library</h1>
+        <p className="mt-2 text-sm text-text-secondary">
           Your download history is stored locally and works offline.
         </p>
         {libraryStats.count > 0 ? (
-          <p className="mt-2 text-xs text-text-secondary">
-            {libraryStats.count} {libraryStats.count === 1 ? 'track' : 'tracks'}
-            {libraryStats.totalBytes > 0 ? ` · ${formatFileSize(libraryStats.totalBytes)} downloaded` : ''}
-          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <span className="rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold text-accent">
+              {libraryStats.count} {libraryStats.count === 1 ? 'track' : 'tracks'}
+            </span>
+            {libraryStats.totalBytes > 0 ? (
+              <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-medium text-text-secondary">
+                {formatFileSize(libraryStats.totalBytes)} downloaded
+              </span>
+            ) : null}
+          </div>
         ) : null}
       </header>
 
-      <div className="flex gap-2">
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
         <input
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search title, artist, album"
-          className="flex-1 rounded-xl border border-border bg-surface-muted px-4 py-3 text-sm outline-none ring-accent focus:ring-2"
+          className="w-full min-w-0 flex-1 rounded-xl border border-border bg-surface-muted px-4 py-3 text-sm outline-none transition focus:border-accent/50 focus:ring-2 focus:ring-accent/30"
         />
         <select
           value={sortBy}
           onChange={(event) => setSortBy(event.target.value as 'date' | 'artist' | 'album')}
-          className="rounded-xl border border-border bg-surface-muted px-3 text-sm text-text-primary"
+          className="w-full shrink-0 rounded-xl border border-border bg-surface-muted px-3 py-3 text-sm text-text-primary sm:w-auto"
         >
           <option value="date">Date</option>
           <option value="artist">Artist</option>
@@ -107,13 +113,13 @@ export function LibraryPage() {
       </div>
 
       {tracksQuery.isLoading ? (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="h-20 animate-pulse rounded-2xl bg-surface-muted" />
+            <div key={index} className="animate-shimmer h-20 rounded-2xl" />
           ))}
         </div>
       ) : tracks.length ? (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {tracks.map((track) => (
             <TrackCard
               key={track.id}
@@ -128,7 +134,13 @@ export function LibraryPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-border p-8 text-center">
+        <div className="rounded-2xl border border-dashed border-border/80 p-8 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-muted">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-8 w-8 text-text-secondary/50">
+              <circle cx="12" cy="12" r="10" />
+              <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />
+            </svg>
+          </div>
           <p className="text-sm font-medium text-text-primary">No downloads yet</p>
           <p className="mt-1 text-xs text-text-secondary">
             Downloaded tracks will appear here with cover art and metadata.

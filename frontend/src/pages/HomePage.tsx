@@ -230,11 +230,16 @@ export function HomePage() {
   }, [jobs, saveTrackFile, saveZipFile])
 
   return (
-    <div className="space-y-5 p-4 pb-6">
-      <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">DgLabs</p>
-        <h1 className="mt-1 text-2xl font-bold text-text-primary">Download Music</h1>
-        <p className="mt-1 text-sm text-text-secondary">
+    <div className="min-w-0 space-y-5 pb-6 pt-4">
+      <header className="animate-fade-in-up">
+        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+          <span className="h-1.5 w-1.5 rounded-full gradient-accent" aria-hidden />
+          DgLabs
+        </p>
+        <h1 className="mt-2 text-3xl font-extrabold tracking-tight gradient-text sm:text-4xl">
+          Download Music
+        </h1>
+        <p className="mt-2 max-w-prose text-sm text-text-secondary">
           Paste a YouTube link and save 320 kbps MP3 files to your device.
         </p>
       </header>
@@ -242,89 +247,91 @@ export function HomePage() {
       <InstallBanner />
       <OnboardingCarousel />
 
-      <Card>
-        <UrlInput
-          value={url}
-          onChange={setUrl}
-          onAnalyze={() => analyzeMutation.mutate(url.trim())}
-          loading={analyzeMutation.isPending}
-        />
-      </Card>
-
-      {analyzeMutation.isPending ? <AnalyzeSkeleton /> : null}
-
-      {analysis ? (
-        <Card className="space-y-4">
-          <div>
-            <p className="text-sm font-semibold text-text-primary">{analysis.title}</p>
-            {analysis.album ? (
-              <p className="text-xs text-text-secondary">Album: {analysis.album}</p>
-            ) : null}
-          </div>
-
-          <TrackSelectList
-            entries={analysis.entries}
-            selectedIds={selectedIds}
-            onToggle={(id) => {
-              setSelectedIds((current) => {
-                const next = new Set(current)
-                if (next.has(id)) next.delete(id)
-                else next.add(id)
-                return next
-              })
-            }}
-            onToggleAll={(selected) => {
-              setSelectedIds(
-                selected ? new Set(analysis.entries.map((entry) => entry.id)) : new Set(),
-              )
-            }}
-          />
-
-          <div className="grid grid-cols-2 gap-2">
-            <Button
-              variant={mode === 'individual' ? 'primary' : 'secondary'}
-              onClick={() => setMode('individual')}
-            >
-              Individual files
-            </Button>
-            <Button
-              variant={mode === 'zip' ? 'primary' : 'secondary'}
-              onClick={() => setMode('zip')}
-            >
-              ZIP package
-            </Button>
-          </div>
-
-          <Button fullWidth onClick={handleDownloadRequest} disabled={!selectedEntries.length}>
-            Add to Queue ({selectedEntries.length})
-          </Button>
-        </Card>
-      ) : null}
-
-      {jobs.length ? (
-        <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-text-secondary">
-            Active Queue
-          </h2>
-          {jobs.map((job, index) => (
-            <QueueItem
-              key={job.id}
-              job={job}
-              isFirst={index === 0}
-              isLast={index === jobs.length - 1}
-              onCancel={() => {
-                void cancelJob(job.id).then(() => {
-                  updateJob(job.id, { status: 'cancelled' })
-                })
-              }}
-              onRetryZip={() => void saveZipFile(job.id)}
-              onRetryFailed={() => void retryFailedTracks(job)}
-              onReorder={(direction) => reorderJob(job.id, direction)}
-              onDismiss={() => removeJob(job.id)}
+      <div className="min-w-0 space-y-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6 lg:space-y-0">
+        <div className="min-w-0 space-y-5">
+          <Card>
+            <UrlInput
+              value={url}
+              onChange={setUrl}
+              onAnalyze={() => analyzeMutation.mutate(url.trim())}
+              loading={analyzeMutation.isPending}
             />
-          ))}
-        </section>
-      ) : null}
+          </Card>
+
+          {analyzeMutation.isPending ? <AnalyzeSkeleton /> : null}
+
+          {analysis ? (
+            <Card className="animate-fade-in-up space-y-4">
+              <div>
+                <p className="truncate text-sm font-semibold text-text-primary">{analysis.title}</p>
+                {analysis.album ? (
+                  <p className="truncate text-xs text-text-secondary">Album: {analysis.album}</p>
+                ) : null}
+              </div>
+
+              <TrackSelectList
+                entries={analysis.entries}
+                selectedIds={selectedIds}
+                onToggle={(id) => {
+                  setSelectedIds((current) => {
+                    const next = new Set(current)
+                    if (next.has(id)) next.delete(id)
+                    else next.add(id)
+                    return next
+                  })
+                }}
+                onToggleAll={(selected) => {
+                  setSelectedIds(
+                    selected ? new Set(analysis.entries.map((entry) => entry.id)) : new Set(),
+                  )
+                }}
+              />
+
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant={mode === 'individual' ? 'primary' : 'secondary'}
+                  onClick={() => setMode('individual')}
+                >
+                  Individual files
+                </Button>
+                <Button
+                  variant={mode === 'zip' ? 'primary' : 'secondary'}
+                  onClick={() => setMode('zip')}
+                >
+                  ZIP package
+                </Button>
+              </div>
+
+              <Button fullWidth onClick={handleDownloadRequest} disabled={!selectedEntries.length}>
+                Add to Queue ({selectedEntries.length})
+              </Button>
+            </Card>
+          ) : null}
+        </div>
+
+        {jobs.length ? (
+          <section className="min-w-0 space-y-3">
+            <h2 className="section-heading-accent">Active Queue</h2>
+            {jobs.map((job, index) => (
+              <QueueItem
+                key={job.id}
+                job={job}
+                isFirst={index === 0}
+                isLast={index === jobs.length - 1}
+                onCancel={() => {
+                  void cancelJob(job.id).then(() => {
+                    updateJob(job.id, { status: 'cancelled' })
+                  })
+                }}
+                onRetryZip={() => void saveZipFile(job.id)}
+                onRetryFailed={() => void retryFailedTracks(job)}
+                onReorder={(direction) => reorderJob(job.id, direction)}
+                onDismiss={() => removeJob(job.id)}
+              />
+            ))}
+          </section>
+        ) : null}
+      </div>
 
       {showDuplicateModal ? (
         <DuplicateModal

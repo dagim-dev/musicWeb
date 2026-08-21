@@ -9,8 +9,8 @@ function App() {
   const setActiveTab = useDownloadQueueStore((s) => s.setActiveTab)
 
   return (
-    <div className="app-shell">
-      <main className="flex-1 overflow-y-auto">
+    <div className="app-shell gradient-mesh">
+      <main className="flex-1 overflow-y-auto overflow-x-clip">
         {activeTab === 'home' ? <HomePage /> : null}
         {activeTab === 'library' ? <LibraryPage /> : null}
         {activeTab === 'settings' ? <SettingsPage /> : null}

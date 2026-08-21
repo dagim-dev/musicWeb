@@ -39,13 +39,27 @@ export function OnboardingCarousel() {
   }
 
   return (
-    <Card className="mb-4 space-y-3 border-accent/20 bg-accent/5">
-      <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-        Step {index + 1} of {slides.length}
-      </p>
-      <h2 className="text-base font-semibold text-text-primary">{slide.title}</h2>
-      <p className="text-sm text-text-secondary">{slide.body}</p>
-      <div className="flex gap-2">
+    <Card className="animate-fade-in-up mb-4 space-y-4 border-accent/20 bg-accent/5">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-semibold uppercase tracking-widest text-accent">
+          Step {index + 1} of {slides.length}
+        </p>
+        <div className="flex gap-1.5">
+          {slides.map((_, i) => (
+            <span
+              key={i}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === index ? 'w-4 gradient-accent' : 'w-1.5 bg-surface-muted'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+      <div key={index} className="animate-fade-in-up space-y-2">
+        <h2 className="text-base font-semibold text-text-primary">{slide.title}</h2>
+        <p className="text-sm text-text-secondary">{slide.body}</p>
+      </div>
+      <div className="flex min-w-0 gap-2">
         {!isLast ? (
           <Button
             fullWidth
@@ -58,7 +72,7 @@ export function OnboardingCarousel() {
             Get started
           </Button>
         )}
-        <Button variant="ghost" onClick={() => void finish()}>
+        <Button variant="ghost" onClick={() => void finish()} className="shrink-0">
           Skip
         </Button>
       </div>

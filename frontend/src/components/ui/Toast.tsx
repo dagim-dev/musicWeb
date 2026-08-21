@@ -27,10 +27,10 @@ export function Toast({ message, visible, onClose, variant = 'info', action }: T
   return (
     <div
       className={clsx(
-        'fixed inset-x-4 bottom-24 z-50 rounded-xl border px-4 py-3 text-sm font-medium shadow-xl',
-        variant === 'success' && 'border-success/30 bg-success/20 text-success',
-        variant === 'error' && 'border-danger/30 bg-danger/20 text-danger',
-        variant === 'info' && 'border-border bg-surface-elevated text-text-primary',
+        'fixed inset-x-4 bottom-24 z-50 max-w-full animate-fade-in-up rounded-xl border-l-4 px-4 py-3 text-sm font-medium shadow-2xl backdrop-blur-md sm:inset-x-auto sm:left-1/2 sm:w-full sm:max-w-md sm:-translate-x-1/2',
+        variant === 'success' && 'border-l-success border-success/20 bg-success/15 text-success',
+        variant === 'error' && 'border-l-danger border-danger/20 bg-danger/15 text-danger',
+        variant === 'info' && 'border-l-accent border-border/50 bg-surface-elevated/95 text-text-primary',
       )}
     >
       <p>{message}</p>

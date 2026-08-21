@@ -4,7 +4,7 @@ import { getSetting, setSetting } from '@/db/libraryRepository'
 export type ThemeMode = 'dark' | 'light' | 'system'
 
 const THEME_COLORS: Record<'dark' | 'light', string> = {
-  dark: '#0f0f12',
+  dark: '#050508',
   light: '#f8fafc',
 }
 
