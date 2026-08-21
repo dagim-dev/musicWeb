@@ -14,7 +14,7 @@ export default defineConfig({
       manifest: {
         name: 'DgLabs',
         short_name: 'DgLabs',
-        description: 'Download YouTube audio as high-quality MP3 files',
+        description: 'Download an audio as high-quality MP3 files',
         theme_color: '#050508',
         background_color: '#050508',
         display: 'standalone',

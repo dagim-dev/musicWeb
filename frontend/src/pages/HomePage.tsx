@@ -118,7 +118,7 @@ export function HomePage() {
           Download Music
         </h1>
         <p className="mt-2 max-w-prose text-sm text-text-secondary">
-          Paste a YouTube link and save 320 kbps MP3 files to your device.
+          Paste a link and save 320 kbps MP3 files to your device.
         </p>
       </header>
 

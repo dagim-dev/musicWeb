@@ -9,7 +9,7 @@ const slides = [
     body: 'Tap Install App on the home screen to launch DgLabs without the browser URL bar.',
   },
   {
-    title: 'Paste any YouTube link',
+    title: 'Paste any link',
     body: 'Supports single videos, playlists, and album-style playlists.',
   },
   {

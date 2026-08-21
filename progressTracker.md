@@ -20,4 +20,4 @@
 
 - Keep the Mac backend and phone on the same Wi-Fi network
 - Regenerate icons with `cd frontend && npm run icons` if branding changes
-- If YouTube extraction changes upstream, update `yt-dlp` on the local backend first
+- If media extraction changes upstream, update `yt-dlp` on the local backend first

@@ -8,7 +8,7 @@
 
 ## Project summary
 
-DgLabs is an **Android-first Progressive Web App** that downloads YouTube audio as **320 kbps MP3** files with full **ID3v2.3 metadata** (artist, album, track number, embedded cover art). Files save to the device Downloads folder and appear in **Samsung Music** after a media scan.
+DgLabs is an **Android-first Progressive Web App** that downloads audio as **320 kbps MP3** files with full **ID3v2.3 metadata** (artist, album, track number, embedded cover art). Files save to the device Downloads folder and appear in **Samsung Music** after a media scan.
 
 Built as a full-stack university project: React/Vite frontend, FastAPI media pipeline, and real-time progress via Socket.IO, all run locally on a Mac and reached from a phone over the same Wi‑Fi network.
 
@@ -72,7 +72,7 @@ flowchart TB
 ## Key features demonstrated
 
 - Installable PWA with custom icons and dark/light theme
-- YouTube video, playlist, and album-style URL analysis
+- Video, playlist, and album-style URL analysis
 - Per-track pipeline stages: download → convert → tag → deliver
 - Real-time Socket.IO progress with REST polling fallback
 - Download queue with reorder, cancel, retry failed tracks
@@ -92,7 +92,7 @@ See [`DEMO.md`](./DEMO.md) for the full presenter script.
 
 1. Open `http://YOUR-MAC-LAN-IP:5173` on Android Chrome
 2. Install to Home Screen if supported by the browser
-3. Paste a YouTube URL → Analyze → Add to Queue
+3. Paste a URL → Analyze → Add to Queue
 4. Show per-track progress stages
 5. Tap **Open Samsung Music** → verify artist, album, cover art
 6. Library tab → show offline history and duplicate detection
@@ -103,7 +103,7 @@ See [`DEMO.md`](./DEMO.md) for the full presenter script.
 
 | Method | Path                                | Purpose                               |
 | ------ | ----------------------------------- | ------------------------------------- |
-| POST   | `/api/v1/analyze`                   | Parse YouTube URL                     |
+| POST   | `/api/v1/analyze`                   | Parse URL                             |
 | POST   | `/api/v1/jobs`                      | Start download job                    |
 | GET    | `/api/v1/jobs/{id}`                 | Job status (polling)                  |
 | GET    | `/api/v1/jobs/{id}/tracks/{n}/file` | MP3 download                          |
@@ -127,8 +127,8 @@ See [`README.md`](./README.md) for the local setup and LAN access notes.
 ## Known limitations (documented)
 
 - PWA saves to Downloads via browser pipeline — not direct Samsung Music library injection
-- 320 kbps re-encodes best available YouTube source (cannot exceed source quality)
-- Some YouTube URLs may fail if the upstream extractor changes or the source is restricted
+- 320 kbps re-encodes best available source (cannot exceed source quality)
+- Some URLs may fail if the upstream extractor changes or the source is restricted
 - No user accounts or in-app audio player (out of scope)
 
 ---

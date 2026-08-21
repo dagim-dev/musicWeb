@@ -1,6 +1,6 @@
 # DgLabs
 
-DgLabs is a local-only Progressive Web App (PWA) for downloading YouTube audio as **320 kbps MP3** files with full ID3 metadata. It is designed to run on your Mac and be accessed from your phone over the same Wi-Fi network.
+DgLabs is a local-only Progressive Web App (PWA) for downloading audio as **320 kbps MP3** files with full ID3 metadata. It is designed to run on your Mac and be accessed from your phone over the same Wi-Fi network.
 
 ## Architecture
 
@@ -25,7 +25,7 @@ FastAPI backend on your Mac
 ## Features
 
 - Installable PWA with a mobile-friendly UI
-- YouTube video, playlist, and album-style playlist support
+- Video, playlist, and album-style playlist support
 - Per-track progress updates for downloading, converting, tagging, and delivery
 - Real-time Socket.IO updates with REST polling fallback
 - Local library history with export/import support
@@ -49,7 +49,7 @@ source .venv/bin/activate
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Confirm `yt-dlp` is recent enough for YouTube extraction:
+Confirm `yt-dlp` is recent enough for media extraction:
 
 ```bash
 /Users/dagi/musicWebsite/backend/.venv/bin/yt-dlp --version
@@ -76,7 +76,7 @@ Keep `VITE_API_URL` and `VITE_SOCKET_URL` unset for the browser PWA so it uses t
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
-| POST | `/api/v1/analyze` | Parse a YouTube URL and return track metadata |
+| POST | `/api/v1/analyze` | Parse a URL and return track metadata |
 | POST | `/api/v1/jobs` | Start a download or conversion job |
 | GET | `/api/v1/jobs/{id}` | Fetch job status for polling fallback |
 | GET | `/api/v1/jobs/{id}/tracks/{n}/file` | Download an MP3 file |
@@ -111,6 +111,6 @@ musicWebsite/
 └── docker-compose.yml
 ```
 
-## University disclaimer
+## disclaimer
 
 This project is for educational demonstration only and is not intended for production use.

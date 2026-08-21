@@ -1,7 +1,7 @@
 [project]
 name = "dglabs-backend"
 version = "0.1.0"
-description = "DgLabs YouTube-to-MP3 API"
+description = "DgLabs media-to-MP3 API"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115.0",

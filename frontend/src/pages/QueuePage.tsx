@@ -73,7 +73,7 @@ export function QueuePage() {
           <div>
             <p className="text-sm font-semibold text-text-primary">Nothing in the queue</p>
             <p className="mt-1 text-xs text-text-secondary">
-              Analyze a YouTube link and tap Add to Queue to get started.
+              Analyze a link and tap Add to Queue to get started.
             </p>
           </div>
           <Button variant="secondary" onClick={() => setActiveTab('home')}>

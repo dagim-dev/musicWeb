@@ -12,7 +12,7 @@
 
 1. Start the stack with `docker compose up --build` (or run backend + frontend dev servers directly).
 2. Open `http://localhost:5173` on the same Mac or use Chrome DevTools mobile emulation.
-3. Confirm the app can analyze a known public YouTube URL before you begin the live presentation.
+3. Confirm the app can analyze a known public URL before you begin the live presentation.
 
 ## Script
 
@@ -26,9 +26,9 @@
 
 ### 2. Download a single track (45 seconds)
 
-> "I'll paste a YouTube link and DgLabs analyzes the metadata before downloading."
+> "I'll paste a link and DgLabs analyzes the metadata before downloading."
 
-- Paste a short YouTube video URL
+- Paste a short video URL
 - Tap **Analyze** — show title, artist, thumbnail
 - Tap **Add to Queue**
 - Point out live progress stages: Downloading → Converting → Embedding metadata
@@ -38,7 +38,7 @@
 
 > "DgLabs supports full playlists and album-style collections."
 
-- Paste a YouTube playlist URL
+- Paste a playlist URL
 - Show track selection (deselect one track to demonstrate choice)
 - Choose **Individual files** or **ZIP package**
 - Show per-track progress: "Track 4 of 12 — Converting 67%"
