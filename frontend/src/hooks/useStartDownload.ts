@@ -4,6 +4,7 @@ import { useDownloadQueueStore, type QueueJob } from '@/stores/downloadQueueStor
 
 export function useStartDownload() {
   const addJob = useDownloadQueueStore((s) => s.addJob)
+  const setActiveTab = useDownloadQueueStore((s) => s.setActiveTab)
 
   const startDownload = useCallback(
     async (params: {
@@ -12,8 +13,9 @@ export function useStartDownload() {
       album: string | null
       entries: TrackEntry[]
       mode: DownloadMode
+      switchToHome?: boolean
     }) => {
-      const { url, title, album, entries, mode } = params
+      const { url, title, album, entries, mode, switchToHome = false } = params
       if (!entries.length) return null
 
       const entryIds = entries.map((entry) => entry.id)
@@ -35,15 +37,14 @@ export function useStartDownload() {
           message: 'Waiting…',
           fileName: null,
           error: null,
-          saveStatus: 'idle',
-          saveError: null,
         })),
       }
 
       addJob(job)
+      if (switchToHome) setActiveTab('home')
       return job
     },
-    [addJob],
+    [addJob, setActiveTab],
   )
 
   return { startDownload }

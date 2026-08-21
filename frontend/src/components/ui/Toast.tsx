@@ -27,20 +27,18 @@ export function Toast({ message, visible, onClose, variant = 'info', action }: T
   return (
     <div
       className={clsx(
-        'fixed inset-x-4 z-40 rounded-xl border px-4 py-3 text-sm font-medium md:inset-x-auto md:right-6 md:left-auto md:w-96',
-        'bottom-[calc(var(--dock-offset,6.5rem)+0.75rem)]',
-        variant === 'success' && 'border-success/30 bg-surface-elevated text-success',
-        variant === 'error' && 'border-danger/30 bg-surface-elevated text-danger',
+        'fixed inset-x-4 bottom-24 z-50 rounded-xl border px-4 py-3 text-sm font-medium shadow-xl',
+        variant === 'success' && 'border-success/30 bg-success/20 text-success',
+        variant === 'error' && 'border-danger/30 bg-danger/20 text-danger',
         variant === 'info' && 'border-border bg-surface-elevated text-text-primary',
       )}
-      role="status"
     >
       <p>{message}</p>
       {action ? (
         <Button
           variant="secondary"
           fullWidth
-          className="mt-2"
+          className="mt-2 !bg-surface-elevated !text-text-primary"
           onClick={() => {
             action.onClick()
             onClose()

@@ -8,11 +8,10 @@ export function isNativeApp(): boolean {
 }
 
 interface DgLabsSaverPlugin {
-  saveAudioFile(options: { fileName: string; data: string }): Promise<{ path: string; uri?: string }>
-  readAudioFile(options: { uri?: string; path?: string; fileName?: string }): Promise<{ data: string }>
+  saveAudioFile(options: { fileName: string; data: string }): Promise<{ path: string }>
 }
 
-export const DgLabsSaver = registerPlugin<DgLabsSaverPlugin>('DgLabsSaver')
+const DgLabsSaver = registerPlugin<DgLabsSaverPlugin>('DgLabsSaver')
 
 export async function blobToBase64(blob: Blob): Promise<string> {
   const buffer = await blob.arrayBuffer()
@@ -26,19 +25,10 @@ export async function blobToBase64(blob: Blob): Promise<string> {
   return btoa(binary)
 }
 
-export function base64ToBlob(data: string, mimeType = 'audio/mpeg'): Blob {
-  const binary = atob(data)
-  const bytes = new Uint8Array(binary.length)
-  for (let i = 0; i < binary.length; i += 1) {
-    bytes[i] = binary.charCodeAt(i)
-  }
-  return new Blob([bytes], { type: mimeType })
-}
-
-export async function saveBlobToDgLabs(blob: Blob, fileName: string): Promise<{ path: string; uri: string | null }> {
+export async function saveBlobToDgLabs(blob: Blob, fileName: string): Promise<string> {
   const data = await blobToBase64(blob)
   const result = await DgLabsSaver.saveAudioFile({ fileName, data })
-  return { path: result.path, uri: result.uri || null }
+  return result.path
 }
 
 export function getSaveLocationMessage(): string {

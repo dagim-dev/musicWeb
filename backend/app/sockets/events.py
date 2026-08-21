@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from __future__ import annotations
+
 import socketio
 
 from app.config import get_settings
@@ -27,11 +29,7 @@ async def join_job(sid, data):  # type: ignore[no-untyped-def]
 
 
 async def emit_job_started(job_id: str, total_tracks: int) -> None:
-    await sio.emit(
-        "job:started",
-        {"job_id": job_id, "total_tracks": total_tracks},
-        room=job_room(job_id),
-    )
+    await sio.emit("job:started", {"total_tracks": total_tracks}, room=job_room(job_id))
 
 
 async def emit_track_progress(
@@ -43,13 +41,7 @@ async def emit_track_progress(
 ) -> None:
     await sio.emit(
         "track:progress",
-        {
-            "job_id": job_id,
-            "index": index,
-            "stage": stage,
-            "percent": percent,
-            "message": message,
-        },
+        {"index": index, "stage": stage, "percent": percent, "message": message},
         room=job_room(job_id),
     )
 
@@ -65,7 +57,6 @@ async def emit_track_complete(
     await sio.emit(
         "track:complete",
         {
-            "job_id": job_id,
             "index": index,
             "file_name": file_name,
             "download_url": download_url,
@@ -77,16 +68,8 @@ async def emit_track_complete(
 
 
 async def emit_track_error(job_id: str, index: int, error: str) -> None:
-    await sio.emit(
-        "track:error",
-        {"job_id": job_id, "index": index, "error": error},
-        room=job_room(job_id),
-    )
+    await sio.emit("track:error", {"index": index, "error": error}, room=job_room(job_id))
 
 
 async def emit_job_complete(job_id: str, zip_url: str | None) -> None:
-    await sio.emit(
-        "job:complete",
-        {"job_id": job_id, "zip_url": zip_url},
-        room=job_room(job_id),
-    )
+    await sio.emit("job:complete", {"zip_url": zip_url}, room=job_room(job_id))

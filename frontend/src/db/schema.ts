@@ -1,7 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
 
-export type PlaybackKind = 'native' | 'file-handle' | 'session' | 'unavailable'
-
 export interface TrackRecord {
   id: string
   youtubeId: string
@@ -16,11 +14,6 @@ export interface TrackRecord {
   fileSize: number | null
   downloadedAt: string
   sourceUrl: string
-  playbackKind: PlaybackKind
-  nativePath: string | null
-  nativeUri: string | null
-  fileHandle?: FileSystemFileHandle | null
-  fileAvailable: boolean
 }
 
 export interface DownloadHistoryRecord {
@@ -49,23 +42,6 @@ export class MusicLibraryDB extends Dexie {
       downloadHistory: 'id, jobId, trackId, completedAt',
       settings: 'key',
     })
-    this.version(2)
-      .stores({
-        tracks: 'id, youtubeId, artist, album, title, downloadedAt, playbackKind',
-        downloadHistory: 'id, jobId, trackId, completedAt',
-        settings: 'key',
-      })
-      .upgrade(async (tx) => {
-        await tx
-          .table('tracks')
-          .toCollection()
-          .modify((track: TrackRecord) => {
-            track.playbackKind = track.playbackKind ?? 'unavailable'
-            track.nativePath = track.nativePath ?? null
-            track.nativeUri = track.nativeUri ?? null
-            track.fileAvailable = track.fileAvailable ?? false
-          })
-      })
   }
 }
 
