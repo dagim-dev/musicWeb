@@ -13,9 +13,9 @@ export function useStartDownload() {
       album: string | null
       entries: TrackEntry[]
       mode: DownloadMode
-      switchToHome?: boolean
+      switchToQueue?: boolean
     }) => {
-      const { url, title, album, entries, mode, switchToHome = false } = params
+      const { url, title, album, entries, mode, switchToQueue = false } = params
       if (!entries.length) return null
 
       const entryIds = entries.map((entry) => entry.id)
@@ -41,7 +41,7 @@ export function useStartDownload() {
       }
 
       addJob(job)
-      if (switchToHome) setActiveTab('home')
+      if (switchToQueue) setActiveTab('queue')
       return job
     },
     [addJob, setActiveTab],

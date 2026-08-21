@@ -26,7 +26,7 @@ export interface QueueJob {
 
 interface DownloadQueueState {
   jobs: QueueJob[]
-  activeTab: 'home' | 'library' | 'settings'
+  activeTab: 'home' | 'queue' | 'settings'
   addJob: (job: QueueJob) => void
   updateJob: (jobId: string, patch: Partial<QueueJob>) => void
   updateTrack: (
@@ -36,7 +36,7 @@ interface DownloadQueueState {
   ) => void
   removeJob: (jobId: string) => void
   reorderJob: (jobId: string, direction: 'up' | 'down') => void
-  setActiveTab: (tab: 'home' | 'library' | 'settings') => void
+  setActiveTab: (tab: 'home' | 'queue' | 'settings') => void
 }
 
 export const useDownloadQueueStore = create<DownloadQueueState>((set) => ({

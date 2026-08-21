@@ -1,6 +1,7 @@
 import { BottomNav } from '@/components/layout/BottomNav'
+import { QueueEffects } from '@/components/queue/QueueEffects'
 import { HomePage } from '@/pages/HomePage'
-import { LibraryPage } from '@/pages/LibraryPage'
+import { QueuePage } from '@/pages/QueuePage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { useDownloadQueueStore } from '@/stores/downloadQueueStore'
 
@@ -10,9 +11,10 @@ function App() {
 
   return (
     <div className="app-shell gradient-mesh">
+      <QueueEffects />
       <main className="flex-1 overflow-y-auto overflow-x-clip">
         {activeTab === 'home' ? <HomePage /> : null}
-        {activeTab === 'library' ? <LibraryPage /> : null}
+        {activeTab === 'queue' ? <QueuePage /> : null}
         {activeTab === 'settings' ? <SettingsPage /> : null}
       </main>
       <BottomNav active={activeTab} onChange={setActiveTab} />

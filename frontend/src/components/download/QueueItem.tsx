@@ -20,6 +20,7 @@ interface QueueItemProps {
   job: QueueJob
   isFirst?: boolean
   isLast?: boolean
+  hideActiveTrack?: boolean
   onCancel?: () => void
   onRetryZip?: () => void
   onRetryFailed?: () => void
@@ -31,6 +32,7 @@ export function QueueItem({
   job,
   isFirst,
   isLast,
+  hideActiveTrack,
   onCancel,
   onRetryZip,
   onRetryFailed,
@@ -93,7 +95,7 @@ export function QueueItem({
         </div>
       </div>
 
-      {activeTrack ? (
+      {activeTrack && !hideActiveTrack ? (
         <div
           key={`${activeTrack.entry.id}-${activeTrack.stage}`}
           className="animate-fade-in-up flex min-w-0 gap-4 rounded-xl border border-accent/20 bg-accent/5 p-3"

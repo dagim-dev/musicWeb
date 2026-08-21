@@ -1,8 +1,8 @@
 import clsx from 'clsx'
 
 interface BottomNavProps {
-  active: 'home' | 'library' | 'settings'
-  onChange: (tab: 'home' | 'library' | 'settings') => void
+  active: 'home' | 'queue' | 'settings'
+  onChange: (tab: 'home' | 'queue' | 'settings') => void
 }
 
 const items = [
@@ -16,11 +16,11 @@ const items = [
     ),
   },
   {
-    id: 'library' as const,
-    label: 'Library',
+    id: 'queue' as const,
+    label: 'Queue',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
-        <path d="M9 18V5l12-2v13M9 18a3 3 0 11-6 0 3 3 0 016 0zm12-2a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M4 6h16M4 12h16M4 18h10" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
   },
