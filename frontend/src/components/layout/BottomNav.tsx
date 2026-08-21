@@ -1,12 +1,13 @@
 import clsx from 'clsx'
 
 interface BottomNavProps {
-  active: 'home' | 'settings'
-  onChange: (tab: 'home' | 'settings') => void
+  active: 'home' | 'library' | 'settings'
+  onChange: (tab: 'home' | 'library' | 'settings') => void
 }
 
 const items = [
   { id: 'home' as const, label: 'Download', icon: '↓' },
+  { id: 'library' as const, label: 'Library', icon: '♪' },
   { id: 'settings' as const, label: 'Settings', icon: '⚙' },
 ]
 

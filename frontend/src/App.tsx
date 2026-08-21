@@ -1,5 +1,6 @@
 import { BottomNav } from '@/components/layout/BottomNav'
 import { HomePage } from '@/pages/HomePage'
+import { LibraryPage } from '@/pages/LibraryPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { useDownloadQueueStore } from '@/stores/downloadQueueStore'
 
@@ -11,6 +12,7 @@ function App() {
     <div className="app-shell">
       <main className="flex-1 overflow-y-auto">
         {activeTab === 'home' ? <HomePage /> : null}
+        {activeTab === 'library' ? <LibraryPage /> : null}
         {activeTab === 'settings' ? <SettingsPage /> : null}
       </main>
       <BottomNav active={activeTab} onChange={setActiveTab} />
